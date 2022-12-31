@@ -8,7 +8,7 @@ set -e
 set -o pipefail
 setfont ter-v32n
 
-PS3="❯ "
+PS3="CHOICE> "
 
 
 echo "Would you like to install Arch Linux using this script?"
@@ -238,13 +238,13 @@ mkfs.fat -F32 $BOOTDEV
 yes | mkfs.ext4 $ROOTDEV
 
 mount $ROOTDEV /mnt
-mount --mkdir /dev/$BOOTDEV /mnt/boot
+mount --mkdir $BOOTDEV /mnt/boot
 
 printf "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
 sed -i "s/#ParallelDownloads/ParallelDownloads/g" /etc/pacman.conf
 sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g" /etc/makepkg.conf
 
-pacman -Syy archlinux-keyring
+pacman -Syy --noconfirm archlinux-keyring
 
 BASE_PKGS=(
 	"base"
@@ -334,7 +334,14 @@ CUSTOM_PKGS=(
 	"slop" # Polywins dependency
 )
 
-pacstrap /mnt "${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${CUSTOM_PKGS[@]} $MICROCODE_PKG" 
+pacstrap /mnt "${BASE_PKGS[@]}"
+pacstrap /mnt "${BOOT_PKGS[@]}"
+pacstrap /mnt "${NETWORK_PKGS[@]}"
+pacstrap /mnt "${BLUETOOTH_PKGS[@]}"
+pacstrap /mnt "${AUDIO_PKGS[@]}"
+pacstrap /mnt "${GPU_PKGS[@]}"
+pacstrap /mnt "${CUSTOM_PKGS[@]}"
+pacstrap /mnt "$MICROCODE_PKG" 
 
 genfstab -U /mnt >> /mnt/etc/fstab
 
@@ -344,7 +351,7 @@ printf "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
 sed -i "s/#ParallelDownloads/ParallelDownloads/g" /etc/pacman.conf
 sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g" /etc/makepkg.conf
 
-pacman -Syy archlinux-keyring
+pacman -Syy --noconfirm archlinux-keyring
 
 # Time zone
 ln -sf /usr/share/zoneinfo/$SELECTED_REGION/$SELECTED_CITY /etc/localtime
@@ -383,6 +390,7 @@ exit
 EOF
 
 arch-chroot /mnt /bin/bash installation.sh
+rm /mnt/installation.sh
 
 if [ $GPU_BRAND == "NVIDIA" ]; then
 	cat << EOF > /mnt/etc/pacman.d/hooks/nvidia.hook
@@ -417,7 +425,6 @@ AUR_PKGS=(
 
 # Install AUR packages
 for aurpkg in "\${AUR_PKGS[@]}"; do
-	infobox "AUR" "Installing \"\$aurpkg\" from the Arch User Repository..."
 	git clone https://aur.archlinux.org/\$aurpkg.git
     sudo chmod 777 \$aurpkg
 	cd \$aurpkg
@@ -516,7 +523,8 @@ exit
 EOF
 
 arch-chroot /mnt /bin/su -c "cd; bash customization.sh" $USERNAME -
+rm /mnt/home/$USERNAME/customization.sh
 
 # ----------------------------- Complete ----------------------------- 
 
-echo "\e[4;34mArch Linux\e[0m has been installed \e[4;32msuccessfully\e[0m on this machine."
+echo -e "\e[4;34mArch Linux\e[0m has been installed \e[4;32msuccessfully\e[0m on this machine."
