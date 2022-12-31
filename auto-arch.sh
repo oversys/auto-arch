@@ -10,7 +10,6 @@ setfont ter-v32n
 
 PS3="CHOICE> "
 
-
 echo "Would you like to install Arch Linux using this script?"
 
 select confirm in Yes No; do
