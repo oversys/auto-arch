@@ -21,7 +21,7 @@ select confirm in Yes No; do
 		No)
 			echo "Cancelling Installation..."
 			exit
-		;;
+			;;
 	esac
 done
 
@@ -69,9 +69,11 @@ clear
 echo -e "Select \e[4;35mCPU brand\e[0m:"
 
 select brand in Intel AMD "Skip CPU microcode installation"; do
-	if [ $brand == "Intel" ]; then
+	CPU_BRAND=$brand
+	
+	if [ $CPU_BRAND == "Intel" ]; then
 		MICROCODE_PKG="intel-ucode"
-	elif [ $brand == "AMD" ]; then
+	elif [ $CPU_BRAND == "AMD" ]; then
 		MICROCODE_PKG="amd-ucode"
 	fi
 	
@@ -132,7 +134,9 @@ clear
 echo "Set root password and user password to be the same?"
 
 select confirm in Yes No; do
-	case $confirm in
+	SAME_PASSWORD=$confirm
+	
+	case $SAME_PASSWORD in
 		Yes)
 			printf "Enter \e[4;35mPassword\e[0m: "
 			read -s PASSWORD
@@ -194,7 +198,7 @@ select confirm in Yes No; do
 			fi
 			
 			exit
-		;;
+			;;
 	esac
 done
 
@@ -205,8 +209,11 @@ echo -e "\e[4;31mBOOT PARTITION:\e[0m $BOOTDEV"
 echo -e "\e[4;31mROOT PARTITION:\e[0m $ROOTDEV"
 echo -e "\e[4;31mREGION:\e[0m $SELECTED_REGION"
 echo -e "\e[4;31mCITY:\e[0m $SELECTED_CITY"
+echo -e "\e[4;31mCPU BRAND:\e[0m $CPU_BRAND"
+echo -e "\e[4;31mGPU BRAND:\e[0m $GPU_BRAND"
 echo -e "\e[4;31mHOSTNAME:\e[0m $HOSTNAME"
 echo -e "\e[4;31mUSERNAME:\e[0m $USERNAME"
+echo -e "\e[4;31mROOT AND $USERNAME SAME PASSWORD?:\e[0m $SAME_PASSWORD"
 printf "\n"
 
 select confirm in Continue Cancel; do
@@ -217,7 +224,7 @@ select confirm in Continue Cancel; do
 		Cancel)
 			echo "Cancelling Installation..."
 			exit
-		;;
+			;;
 	esac
 done
 
