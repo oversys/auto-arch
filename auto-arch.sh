@@ -385,6 +385,8 @@ echo "$USERNAME  ALL=(ALL:ALL) NOPASSWD: ALL" | EDITOR="tee -a" visudo
 systemctl enable NetworkManager.service
 systemctl enable bluetooth.service
 
+rm $0
+
 exit
 EOF
 
@@ -439,6 +441,9 @@ sudo sed -i 's/^webkit_theme\s*=\s*\(.*\)/webkit_theme = lightdm-webkit-theme-ae
 sudo sed -i "s/#greeter-session=example-gtk-gnome/greeter-session=lightdm-webkit2-greeter/g" /etc/lightdm/lightdm.conf
 sudo sed -i "s/#user-session=default/user-session=bspwm/g" /etc/lightdm/lightdm.conf
 sudo systemctl enable lightdm.service
+
+# Set account icon
+sudo cp /usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/default-user.png \$HOME/.face
 
 # Change default shell
 sudo chsh -s /bin/zsh \$USER
@@ -518,11 +523,12 @@ sudo mv macOSBigSur /usr/share/icons/
 
 sudo sed -i "s/Inherits=Adwaita/Inherits=macOSBigSur/g" /usr/share/icons/default/index.theme
 
+rm -rf \$HOME/dotfiles $0
+
 exit
 EOF
 
 arch-chroot /mnt /bin/su -c "cd; bash customization.sh" $USERNAME -
-rm /mnt/home/$USERNAME/customization.sh
 
 # ----------------------------- Complete ----------------------------- 
 
