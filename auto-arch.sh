@@ -333,14 +333,9 @@ CUSTOM_PKGS=(
 	"slop" # Polywins dependency
 )
 
-pacstrap /mnt "${BASE_PKGS[@]}"
-pacstrap /mnt "${BOOT_PKGS[@]}"
-pacstrap /mnt "${NETWORK_PKGS[@]}"
-pacstrap /mnt "${BLUETOOTH_PKGS[@]}"
-pacstrap /mnt "${AUDIO_PKGS[@]}"
-pacstrap /mnt "${GPU_PKGS[@]}"
-pacstrap /mnt "${CUSTOM_PKGS[@]}"
-pacstrap /mnt "$MICROCODE_PKG" 
+PKGS=(${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${CUSTOM_PKGS[@]} $MICROCODE_PKG)
+
+pacstrap /mnt "${PKGS[@]}"
 
 genfstab -U /mnt >> /mnt/etc/fstab
 
