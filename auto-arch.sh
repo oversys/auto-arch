@@ -212,7 +212,7 @@ echo -e "\e[4;31mCPU BRAND:\e[0m $CPU_BRAND"
 echo -e "\e[4;31mGPU BRAND:\e[0m $GPU_BRAND"
 echo -e "\e[4;31mHOSTNAME:\e[0m $HOSTNAME"
 echo -e "\e[4;31mUSERNAME:\e[0m $USERNAME"
-echo -e "\e[4;31mROOT AND $USERNAME SAME PASSWORD?:\e[0m $SAME_PASSWORD"
+echo -e "\e[4;31mROOT AND USER SAME PASSWORD?:\e[0m $SAME_PASSWORD"
 printf "\n"
 
 select confirm in Continue Cancel; do
