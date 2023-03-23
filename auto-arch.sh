@@ -461,6 +461,9 @@ sudo mv \$HOME/dotfiles/dunst \$HOME/.config/
 # Configure Picom 
 sudo mv \$HOME/dotfiles/picom \$HOME/.config/
 
+# Wallpapers
+sudo mv \$HOME/dotfiles/wallpapers \$HOME/.config/
+
 # Install Arabic font
 wget https://github.com/BetaLost/auto-arch/raw/main/khebrat-musamim.zip
 unzip khebrat-musamim.zip
