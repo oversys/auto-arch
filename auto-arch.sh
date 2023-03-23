@@ -398,12 +398,16 @@ for aurpkg in "\${AUR_PKGS[@]}"; do
 	sudo rm -rf \$aurpkg
 done
 
+# Create dwm desktop entry
+mkdir -p /usr/share/xsessions
+printf "[Desktop Entry]\nEncoding=UTF-8\nName=dwm\nExec=default" > /usr/share/xsessions/dwm.desktop
+
 # Install LightDM Aether theme
 git clone https://github.com/NoiSek/Aether.git
 sudo mv Aether /usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether
 sudo sed -i 's/^webkit_theme\s*=\s*\(.*\)/webkit_theme = lightdm-webkit-theme-aether #\1/g' /etc/lightdm/lightdm-webkit2-greeter.conf
 sudo sed -i "s/#greeter-session=example-gtk-gnome/greeter-session=lightdm-webkit2-greeter/g" /etc/lightdm/lightdm.conf
-sudo sed -i "s/#user-session=default/user-session=bspwm/g" /etc/lightdm/lightdm.conf
+sudo sed -i "s/#user-session=default/user-session=dwm/g" /etc/lightdm/lightdm.conf
 sudo systemctl enable lightdm.service
 
 # Set account icon
@@ -433,6 +437,9 @@ sudo make clean install
 # Download dotfiles
 cd \$HOME
 git clone https://github.com/BetaLost/dotfiles.git
+
+# Configure dwm startup script
+mv \$HOME/dotfiles/.xsession \$HOME/
 
 # Configure ZSH
 git clone https://github.com/zsh-users/zsh-autosuggestions.git \$HOME/.zsh/zsh-autosuggestions
