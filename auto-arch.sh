@@ -233,9 +233,6 @@ clear
 
 timedatectl set-ntp true
 
-mkfs.fat -F32 $BOOTDEV
-yes | mkfs.ext4 $ROOTDEV
-
 mount $ROOTDEV /mnt
 mount --mkdir $BOOTDEV /mnt/boot
 
@@ -284,25 +281,22 @@ AUDIO_PKGS=(
 )
 
 CUSTOM_PKGS=(
-	"xorg" # X System
 	"xorg-xinit" # X System
+	"xorg-xrandr" # X System
+	"xorg-xserver" # X System
+	"xorg-xsetroot" # X System
+	"libx11" # X System
+	"libxft" # X System
+	"libxinerama" # X System
+	"freetype2" # Fonts
+	"fontconfig" # Fonts
 	"lightdm" # Display manager
 	"lightdm-webkit2-greeter" # LightDM theme
-	"bspwm" # Tiling Window Manager
-	"sxhkd" # Hotkey Daemon
-	"mesa" # Mesa
-	"lib32-mesa" # 32-bit Mesa
-	"mesa-demos" # Mesa Demos
-	"mesa-utils" # Mesa Utils
-	"vulkan-icd-loader" # Vulkan
-	"lib32-vulkan-icd-loader" # Vulkan
 	"light" # Manage brightness
 	"zsh" # Z Shell
 	"cifs-utils" # Mount Common Internet File System
 	"ntfs-3g" # Mount New Technology File System
-	"rofi" # Search tool
 	"flameshot" # Screenshot tool
-	"kitty" # Terminal Emulator
 	"neovim" # Text Editor
 	"nodejs" # TSServer dependency
 	"npm" # TSServer dependency
@@ -325,12 +319,8 @@ CUSTOM_PKGS=(
 	"python-pip" # Install Python modules/packages
 	"xclip" # Copy to clipboard
 	"ttf-joypixels" # Emoji font
-	"libx11" # X11 Client Library
 	"libxcursor" # Cursor dependency
 	"libpng" # Cursor dependency
-	"xorg-xprop" # Polywins dependency
-	"wmctrl" # Polywins dependency
-	"slop" # Polywins dependency
 )
 
 PKGS=(${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${CUSTOM_PKGS[@]} $MICROCODE_PKG)
