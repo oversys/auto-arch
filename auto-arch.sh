@@ -378,26 +378,6 @@ EOF
 arch-chroot /mnt /bin/bash installation.sh
 rm /mnt/installation.sh
 
-if [ $GPU_BRAND == "NVIDIA" ]; then
-	cat << EOF > /mnt/etc/pacman.d/hooks/nvidia.hook
-[Trigger]
-Operation=Install
-Operation=Upgrade
-Operation=Remove
-Type=Package
-Target=nvidia
-Target=linux
-# Change the linux part above and in the Exec line if a different kernel is used
-
-[Action]
-Description=Update NVIDIA module in initcpio
-Depends=mkinitcpio
-When=PostTransaction
-NeedsTargets
-Exec=/bin/sh -c 'while read -r trg; do case \$trg in linux) exit 0; esac; done; /usr/bin/mkinitcpio -P'
-EOF
-fi
-
 # ----------------------------- Customization ----------------------------- 
 
 cat << EOF > /mnt/home/$USERNAME/customization.sh
@@ -405,7 +385,6 @@ AUR_PKGS=(
 	"nerd-fonts-jetbrains-mono" # JetBrains Mono Nerd Font
 	"ttf-poppins" # Poppins font
 	"picom-ibhagwan-git" # Picom compositor
-	"polybar" # Polybar
 	"brave-bin" # Brave Browser
 )
 
@@ -433,17 +412,27 @@ sudo cp /usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/def
 # Change default shell
 sudo chsh -s /bin/zsh \$USER
 
-# Download dotfiles
-git clone https://github.com/BetaLost/dotfiles.git
+# Make config folder
 mkdir -p \$HOME/.config
 
-# Configure BSPWM and SXHKD
-sudo mv \$HOME/dotfiles/bspwm \$HOME/.config/
-sudo mv \$HOME/dotfiles/sxhkd \$HOME/.config/
-sudo mv \$HOME/dotfiles/wallpapers \$HOME/.config/
+# Install and configure dwm
+git clone https://github.com/BetaLost/dwm.git \$HOME/.config/dwm
+cd \$HOME/.config/dwm
+sudo make clean install
 
-find \$HOME/.config/bspwm -type f -exec chmod +x {} \;
-find \$HOME/.config/sxhkd -type f -exec chmod +x {} \;
+# Install and configure st
+git clone https://github.com/BetaLost/st.git \$HOME/.config/st
+cd \$HOME/.config/st
+sudo make clean install
+
+# Install and configure dmenu
+git clone https://github.com/BetaLost/dmenu.git \$HOME/.config/dmenu
+cd \$HOME/.config/dmenu
+sudo make clean install
+
+# Download dotfiles
+cd \$HOME
+git clone https://github.com/BetaLost/dotfiles.git
 
 # Configure ZSH
 git clone https://github.com/zsh-users/zsh-autosuggestions.git \$HOME/.zsh/zsh-autosuggestions
@@ -453,7 +442,7 @@ mv \$HOME/dotfiles/.zshrc \$HOME/
 # Configure BASH
 mv \$HOME/dotfiles/.bashrc \$HOME/
 
-# Configure Neovim
+# Configure neovim
 curl -fLo \$HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 mv \$HOME/dotfiles/nvim \$HOME/.config/
 nvim -c "PlugInstall | q | q"
@@ -462,21 +451,8 @@ sed -i "s/background = '#282923'/background = '#1a1a18'/g" \$HOME/.local/share/n
 # Configure dunst
 sudo mv \$HOME/dotfiles/dunst \$HOME/.config/
 
-# Configure Rofi
-sudo mv \$HOME/dotfiles/rofi \$HOME/.config/
-
-# Configure Kitty
-sudo mv \$HOME/dotfiles/kitty \$HOME/.config/
-
 # Configure Picom 
 sudo mv \$HOME/dotfiles/picom \$HOME/.config/
-
-# Configure Polybar
-sudo mv \$HOME/dotfiles/polybar \$HOME/.config/
-
-for script in \$HOME/.config/polybar/scripts/*; do
-    sudo chmod +x \$script
-done
 
 # Install Arabic font
 wget https://github.com/BetaLost/auto-arch/raw/main/khebrat-musamim.zip
