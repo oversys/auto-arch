@@ -1,5 +1,5 @@
 # Auto Arch
-This is my personal Arch Linux installation script. This script will install the suckless suite of tools (dwm, st, dmenu).
+This script will configure Arch Linux and install the suckless suite of tools (dwm, st, dmenu).
 
 # Instructions
 > **After booting the install medium**
