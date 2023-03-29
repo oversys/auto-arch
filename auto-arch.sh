@@ -440,6 +440,7 @@ git clone https://github.com/BetaLost/dotfiles.git
 
 # Configure dwm startup script
 mv \$HOME/dotfiles/.xsession \$HOME/
+sudo chmod 777 \$HOME/.xsession
 
 # Configure ZSH
 git clone https://github.com/zsh-users/zsh-autosuggestions.git \$HOME/.zsh/zsh-autosuggestions
