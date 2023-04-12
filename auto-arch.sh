@@ -444,7 +444,6 @@ mv \$HOME/dotfiles/dwmbar.sh \$HOME/
 sudo chmod 777 \$HOME/.xsession
 sudo chmod 777 \$HOME/dwmbar.sh
 
-
 # Configure ZSH
 git clone https://github.com/zsh-users/zsh-autosuggestions.git \$HOME/.zsh/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \$HOME/.zsh/zsh-syntax-highlighting
