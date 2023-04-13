@@ -370,13 +370,12 @@ echo "$USERNAME  ALL=(ALL:ALL) NOPASSWD: ALL" | EDITOR="tee -a" visudo
 systemctl enable NetworkManager.service
 systemctl enable bluetooth.service
 
-rm $0
+rm \$0
 
 exit
 EOF
 
 arch-chroot /mnt /bin/bash installation.sh
-rm /mnt/installation.sh
 
 # ----------------------------- Customization ----------------------------- 
 
@@ -497,7 +496,7 @@ sudo mv macOSBigSur /usr/share/icons/
 
 sudo sed -i "s/Inherits=Adwaita/Inherits=macOSBigSur/g" /usr/share/icons/default/index.theme
 
-rm -rf \$HOME/dotfiles $0
+rm -rf \$HOME/dotfiles \$0
 
 exit
 EOF
