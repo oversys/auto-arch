@@ -398,7 +398,7 @@ for aurpkg in "\${AUR_PKGS[@]}"; do
 done
 
 # Create dwm desktop entry
-mkdir -p /usr/share/xsessions
+sudo mkdir -p /usr/share/xsessions
 printf "[Desktop Entry]\nEncoding=UTF-8\nName=dwm\nExec=default" > /usr/share/xsessions/dwm.desktop
 
 # Install LightDM Aether theme
@@ -421,17 +421,14 @@ mkdir -p \$HOME/.config
 # Install and configure dwm
 git clone https://github.com/BetaLost/dwm.git \$HOME/.config/dwm
 cd \$HOME/.config/dwm
-sudo make clean install
 
 # Install and configure st
 git clone https://github.com/BetaLost/st.git \$HOME/.config/st
 cd \$HOME/.config/st
-sudo make clean install
 
 # Install and configure dmenu
 git clone https://github.com/BetaLost/dmenu.git \$HOME/.config/dmenu
 cd \$HOME/.config/dmenu
-sudo make clean install
 
 # Download dotfiles
 cd \$HOME
