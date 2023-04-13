@@ -317,6 +317,7 @@ CUSTOM_PKGS=(
 	"unzip" # Unzip files
 	"feh" # Image tool
 	"python-pip" # Install Python modules/packages
+	"imagemagick" # Pywal dependency
 	"xclip" # Copy to clipboard
 	"ttf-joypixels" # Emoji font
 	"libxcursor" # Cursor dependency
@@ -396,6 +397,9 @@ for aurpkg in "\${AUR_PKGS[@]}"; do
 	cd ..
 	sudo rm -rf \$aurpkg
 done
+
+# Install Pywal
+pip3 install pywal
 
 # Create dwm desktop entry
 sudo mkdir -p /usr/share/xsessions
