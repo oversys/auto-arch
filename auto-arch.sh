@@ -283,7 +283,7 @@ AUDIO_PKGS=(
 CUSTOM_PKGS=(
 	"xorg-xinit" # X System
 	"xorg-xrandr" # X System
-	"xorg-xserver" # X System
+	"xorg-server" # X System
 	"xorg-xsetroot" # X System
 	"libx11" # X System
 	"libxft" # X System
