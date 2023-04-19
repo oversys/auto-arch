@@ -403,7 +403,7 @@ pip3 install pywal
 
 # Create dwm desktop entry
 sudo mkdir -p /usr/share/xsessions
-printf "[Desktop Entry]\nEncoding=UTF-8\nName=dwm\nExec=default" > /usr/share/xsessions/dwm.desktop
+sudo printf "[Desktop Entry]\nEncoding=UTF-8\nName=dwm\nExec=default" > /usr/share/xsessions/dwm.desktop
 
 # Install LightDM Aether theme
 git clone https://github.com/NoiSek/Aether.git
