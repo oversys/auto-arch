@@ -318,6 +318,7 @@ CUSTOM_PKGS=(
 	"feh" # Image tool
 	"python-pip" # Install Python modules/packages
 	"imagemagick" # Pywal dependency
+	"python-pywal" # Pywal
 	"xclip" # Copy to clipboard
 	"ttf-joypixels" # Emoji font
 	"libxcursor" # Cursor dependency
@@ -398,11 +399,9 @@ for aurpkg in "\${AUR_PKGS[@]}"; do
 	sudo rm -rf \$aurpkg
 done
 
-# Install Pywal
-pip3 install pywal
-
 # Create dwm desktop entry
 sudo mkdir -p /usr/share/xsessions
+sudo chmod 777 /usr/share/xsessions
 sudo printf "[Desktop Entry]\nEncoding=UTF-8\nName=dwm\nExec=default" > /usr/share/xsessions/dwm.desktop
 
 # Install LightDM Aether theme
