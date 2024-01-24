@@ -292,7 +292,7 @@ CUSTOM_PKGS=(
 	"fontconfig" # Fonts
 	"lightdm" # Display manager
 	"lightdm-webkit2-greeter" # LightDM theme
-	"light" # Manage brightness
+	"brightnessctl" # Manage brightness
 	"zsh" # Z Shell
 	"cifs-utils" # Mount Common Internet File System
 	"ntfs-3g" # Mount New Technology File System
