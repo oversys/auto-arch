@@ -414,6 +414,7 @@ sudo systemctl enable lightdm.service
 
 # Set account icon
 sudo cp /usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/default-user.png \$HOME/.face
+sudo chmod 644 \$HOME/.face
 
 # Change default shell
 sudo chsh -s /bin/zsh \$USER
