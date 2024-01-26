@@ -305,6 +305,7 @@ CUSTOM_PKGS=(
 	"clang" # C-Family Language Server
 	"pyright" # Python Language Server
 	"lua-language-server" # Lua Language Server
+ 	"powertop" # Power consumption monitor
 	"htop" # System monitor
 	"exa" # ls alternative
 	"bat" # cat alternative
@@ -388,6 +389,7 @@ AUR_PKGS=(
 	"ttf-poppins" # Poppins font
 	"picom-ibhagwan-git" # Picom compositor
 	"brave-bin" # Brave Browser
+ 	"envycontrol" # GPU Control
 )
 
 # Install AUR packages
