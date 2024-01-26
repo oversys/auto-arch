@@ -316,6 +316,7 @@ CUSTOM_PKGS=(
 	"zip" # Zip files
 	"unzip" # Unzip files
 	"feh" # Image tool
+  	"neofetch" # System info
 	"python-pip" # Install Python modules/packages
 	"imagemagick" # Pywal dependency
 	"python-pywal" # Pywal
@@ -465,6 +466,9 @@ sudo mv \$HOME/dotfiles/dunst \$HOME/.config/
 
 # Configure Picom 
 sudo mv \$HOME/dotfiles/picom \$HOME/.config/
+
+# Configure Neofetch 
+sudo mv \$HOME/dotfiles/neofetch \$HOME/.config/
 
 # Wallpapers
 sudo mv \$HOME/dotfiles/wallpapers \$HOME/.config/
