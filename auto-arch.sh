@@ -441,13 +441,13 @@ cd \$HOME/.config/dmenu
 cd \$HOME
 git clone https://github.com/BetaLost/dotfiles.git
 
-# Configure dwm startup script
+# Configure dwm scripts
 mv \$HOME/dotfiles/.xsession \$HOME/
 mv \$HOME/dotfiles/dwmbar.sh \$HOME/
-mv \$HOME/dotfiles/volbright.sh \$HOME/
+mv \$HOME/dotfiles/utilities.sh \$HOME/
 sudo chmod 777 \$HOME/.xsession
 sudo chmod 777 \$HOME/dwmbar.sh
-sudo chmod 777 \$HOME/volbright.sh
+sudo chmod 777 \$HOME/utilities.sh
 
 # Configure ZSH
 git clone https://github.com/zsh-users/zsh-autosuggestions.git \$HOME/.zsh/zsh-autosuggestions
