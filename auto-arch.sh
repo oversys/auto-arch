@@ -387,7 +387,7 @@ cat << EOF > /mnt/home/$USERNAME/customization.sh
 AUR_PKGS=(
 	"nerd-fonts-jetbrains-mono" # JetBrains Mono Nerd Font
 	"ttf-poppins" # Poppins font
-	"picom-ibhagwan-git" # Picom compositor
+	"picom-ftlabs-git" # Picom compositor
 	"brave-bin" # Brave Browser
  	"envycontrol" # GPU Control
 )
