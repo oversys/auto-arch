@@ -443,8 +443,8 @@ git clone https://github.com/BetaLost/dotfiles.git
 
 # Configure dwm scripts
 mv \$HOME/dotfiles/.xsession \$HOME/
-mv \$HOME/dotfiles/.config/dwmbar.sh \$HOME/
-mv \$HOME/dotfiles/.config/utilities.sh \$HOME/
+mv \$HOME/dotfiles/dwmbar.sh \$HOME/.config/
+mv \$HOME/dotfiles/utilities.sh \$HOME/.config/
 sudo chmod 777 \$HOME/.xsession
 sudo chmod 777 \$HOME/.config/dwmbar.sh
 sudo chmod 777 \$HOME/.config/utilities.sh
