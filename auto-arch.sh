@@ -317,6 +317,7 @@ CUSTOM_PKGS=(
 	"zip" # Zip files
 	"unzip" # Unzip files
 	"feh" # Image tool
+ 	"jq" # JSON Processor
   	"neofetch" # System info
 	"python-pip" # Install Python modules/packages
 	"imagemagick" # Pywal dependency
@@ -422,8 +423,9 @@ sudo chmod 644 \$HOME/.face
 # Change default shell
 sudo chsh -s /bin/zsh \$USER
 
-# Make config folder
+# Make config folder and prayer time history folder
 mkdir -p \$HOME/.config
+mkdir \$HOME/.config/prayerhistory
 
 # Install and configure dwm
 git clone https://github.com/BetaLost/dwm.git \$HOME/.config/dwm
@@ -444,9 +446,11 @@ git clone https://github.com/BetaLost/dotfiles.git
 # Configure dwm scripts
 mv \$HOME/dotfiles/.xsession \$HOME/
 mv \$HOME/dotfiles/dwmbar.sh \$HOME/.config/
+mv \$HOME/dotfiles/prayer.sh \$HOME/.config/
 mv \$HOME/dotfiles/utilities.sh \$HOME/.config/
 sudo chmod 777 \$HOME/.xsession
 sudo chmod 777 \$HOME/.config/dwmbar.sh
+sudo chmod 777 \$HOME/.config/prayer.sh
 sudo chmod 777 \$HOME/.config/utilities.sh
 
 # Configure ZSH
