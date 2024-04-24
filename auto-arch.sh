@@ -4,8 +4,7 @@
 # ----------------------------- Configuration ----------------------------- 
 
 clear
-set -e
-set -o pipefail
+set -eo pipefail
 setfont ter-v32n
 
 PS3="CHOICE> "
@@ -384,7 +383,16 @@ CUSTOM_PKGS=(
 
 PKGS=(${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${CUSTOM_PKGS[@]} $MICROCODE_PKG)
 
-pacstrap /mnt "${PKGS[@]}"
+until pacstrap /mnt "${PKGS[@]}"; do
+	echo -e "\e[4;95mRetry?\e[0m"
+	
+	select retry in Yes No; do
+		case $retry in
+			Yes) break;;
+			No) break 2;;
+		esac
+	done
+done
 
 genfstab -U /mnt >> /mnt/etc/fstab
 
