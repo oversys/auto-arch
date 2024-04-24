@@ -26,6 +26,7 @@ done
 
 clear
 
+# Select boot partition
 echo -e "Select \e[4;31mBoot\e[0m Partition:"
 PARTITIONS=($(fdisk -l | awk '/^[/]/{print $1}'))
 
@@ -36,6 +37,7 @@ done
 
 clear
 
+# Select root partition
 echo -e "Select \e[4;34mRoot\e[0m Partition:"
 
 select partition in "${PARTITIONS[@]}"; do
@@ -45,6 +47,7 @@ done
 
 clear
 
+# Select region
 echo -e "Select \e[4;33mRegion\e[0m:"
 REGIONS=("Africa" "America" "Antarctica" "Asia" "Australia" "Europe" "Pacific")
 
@@ -55,6 +58,7 @@ done
 
 clear
 
+# Select city
 echo -e "Select \e[4;35mCity\e[0m:"
 CITIES=($(ls /usr/share/zoneinfo/$SELECTED_REGION))
 
@@ -65,6 +69,7 @@ done
 
 clear
 
+# Select CPU brand
 echo -e "Select \e[4;35mCPU brand\e[0m:"
 
 select brand in Intel AMD "Skip CPU microcode installation"; do
@@ -81,6 +86,7 @@ done
 
 clear
 
+# Select GPU brand
 echo -e "Select \e[4;35mGPU brand\e[0m:"
 
 select brand in Intel NVIDIA AMD "Skip GPU driver installation"; do
@@ -110,6 +116,47 @@ done
 
 clear
 
+# Select backlight (REQUIRED FOR: dwmbar.sh, utilities.sh)
+BACKLIGHTS=($(ls /sys/class/backlight))
+
+select backlight in "${BACKLIGHTS[@]}"; do
+	BACKLIGHT=$backlight
+	break
+done
+
+clear
+
+# Select network interface (REQUIRED FOR: dwmbar.sh)
+NET_DEVICES=($(ls /sys/class/net))
+
+select interface in "${NET_DEVICES[@]}"; do
+	NET_INTERFACE=$interface
+	break
+done
+
+clear
+
+# Enter country (REQUIRED FOR: prayer.sh)
+printf "Enter \e[4;95mCountry name or ISO 3166 code (ex: Netherlands or NL)\e[0m: "
+read PRAYER_COUNTRY
+
+if [ -z "$PRAYER_COUNTRY" ]; then 
+	echo "Prayer times and hijri date will not be functional until you input the country and city in prayer.sh."
+fi
+
+clear
+
+# Enter city (REQUIRED FOR: prayer.sh)
+printf "Enter \e[4;95mCity name (ex: Makkah)\e[0m: "
+read PRAYER_CITY
+
+if [ -z "$PRAYER_CITY" ]; then 
+	echo "Prayer times and hijri date will not be functional until you input the country and city in prayer.sh."
+fi
+
+clear
+
+# Enter hostname
 printf "Enter \e[4;94mHostname\e[0m: "
 read HOSTNAME
 
@@ -120,6 +167,7 @@ fi
 
 clear
 
+# Enter username
 printf "Enter \e[4;95mUsername\e[0m: "
 read USERNAME
 
@@ -130,6 +178,7 @@ fi
 
 clear
 
+# Enter password(s)
 echo "Set root password and user password to be the same?"
 
 select confirm in Yes No; do
@@ -203,13 +252,18 @@ done
 
 clear
 
+# Confirm inputted data
 echo "Confirm Details:"
 echo -e "\e[4;31mBOOT PARTITION:\e[0m $BOOTDEV"
 echo -e "\e[4;31mROOT PARTITION:\e[0m $ROOTDEV"
-echo -e "\e[4;31mREGION:\e[0m $SELECTED_REGION"
-echo -e "\e[4;31mCITY:\e[0m $SELECTED_CITY"
+echo -e "\e[4;31mREGION (TIMEZONE):\e[0m $SELECTED_REGION"
+echo -e "\e[4;31mCITY (TIMEZONE):\e[0m $SELECTED_CITY"
 echo -e "\e[4;31mCPU BRAND:\e[0m $CPU_BRAND"
 echo -e "\e[4;31mGPU BRAND:\e[0m $GPU_BRAND"
+echo -e "\e[4;31mBACKLIGHT:\e[0m $BACKLIGHT"
+echo -e "\e[4;31mNET INTERFACE:\e[0m $NET_INTERFACE"
+echo -e "\e[4;31mCOUNTRY (PRAYER):\e[0m $PRAYER_COUNTRY"
+echo -e "\e[4;31mCITY (PRAYER):\e[0m $PRAYER_CITY"
 echo -e "\e[4;31mHOSTNAME:\e[0m $HOSTNAME"
 echo -e "\e[4;31mUSERNAME:\e[0m $USERNAME"
 echo -e "\e[4;31mROOT AND USER SAME PASSWORD?:\e[0m $SAME_PASSWORD"
@@ -448,6 +502,15 @@ mv \$HOME/dotfiles/.xsession \$HOME/
 mv \$HOME/dotfiles/dwmbar.sh \$HOME/.config/
 mv \$HOME/dotfiles/prayer.sh \$HOME/.config/
 mv \$HOME/dotfiles/utilities.sh \$HOME/.config/
+
+sed -i "s/_BACKLIGHT_/$BACKLIGHT/" \$HOME/.config/dwmbar.sh
+sed -i "s/_BACKLIGHT_/$BACKLIGHT/" \$HOME/.config/utilities.sh
+
+sed -i "s/_NET_/$NET_INTERFACE/" \$HOME/.config/dwmbar.sh
+
+sed -i "s/_COUNTRY_/$PRAYER_COUNTRY/" \$HOME/.config/prayer.sh
+sed -i "s/_CITY_/$PRAYER_CITY/" \$HOME/.config/prayer.sh
+
 sudo chmod 777 \$HOME/.xsession
 sudo chmod 777 \$HOME/.config/dwmbar.sh
 sudo chmod 777 \$HOME/.config/prayer.sh
