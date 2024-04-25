@@ -510,6 +510,7 @@ mv \$HOME/dotfiles/.xsession \$HOME/
 mv \$HOME/dotfiles/dwmbar.sh \$HOME/.config/
 mv \$HOME/dotfiles/prayer.sh \$HOME/.config/
 mv \$HOME/dotfiles/utilities.sh \$HOME/.config/
+mv \$HOME/dotfiles/emojis.txt \$HOME/.config/
 
 sed -i "s/_BACKLIGHT_/$BACKLIGHT/" \$HOME/.config/dwmbar.sh
 sed -i "s/_BACKLIGHT_/$BACKLIGHT/" \$HOME/.config/utilities.sh
