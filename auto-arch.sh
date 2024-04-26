@@ -350,6 +350,7 @@ CUSTOM_PKGS=(
 	"cifs-utils" # Mount Common Internet File System
 	"ntfs-3g" # Mount New Technology File System
 	"flameshot" # Screenshot tool
+ 	"okular" # PDF Reader
 	"neovim" # Text Editor
 	"nodejs" # TSServer dependency
 	"npm" # TSServer dependency
