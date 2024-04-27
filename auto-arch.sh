@@ -455,6 +455,7 @@ AUR_PKGS=(
 	"picom-ftlabs-git" # Picom compositor
 	"brave-bin" # Brave Browser
  	"envycontrol" # GPU Control
+  	"auto-cpufreq" # Power Management
 )
 
 # Install AUR packages
@@ -466,6 +467,12 @@ for aurpkg in "\${AUR_PKGS[@]}"; do
 	cd ..
 	sudo rm -rf \$aurpkg
 done
+
+# Set GPU mode to hybrid
+sudo envycontrol -s hybrid --rtd3 3
+
+# Enable auto-cpufreq
+sudo auto-cpufreq --install
 
 # Create dwm desktop entry
 sudo mkdir -p /usr/share/xsessions
