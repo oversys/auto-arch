@@ -454,9 +454,11 @@ AUR_PKGS=(
 	"ttf-poppins" # Poppins font
 	"picom-ftlabs-git" # Picom compositor
 	"brave-bin" # Brave Browser
- 	"envycontrol" # GPU Control
   	"auto-cpufreq" # Power Management
 )
+
+# Tool to switch between GPU modes on Optimus systems
+if [ $GPU_BRAND == "NVIDIA" ]; then AUR_PKGS+=("envycontrol"); fi
 
 # Install AUR packages
 for aurpkg in "\${AUR_PKGS[@]}"; do
@@ -468,11 +470,9 @@ for aurpkg in "\${AUR_PKGS[@]}"; do
 	sudo rm -rf \$aurpkg
 done
 
-# Set GPU mode to hybrid
-sudo envycontrol -s hybrid --rtd3 3
-
-# Enable auto-cpufreq
+# Configure power management tools
 sudo auto-cpufreq --install
+if [ $GPU_BRAND == "NVIDIA" ]; then sudo envycontrol -s hybrid --rtd3 3; fi
 
 # Create dwm desktop entry
 sudo mkdir -p /usr/share/xsessions
