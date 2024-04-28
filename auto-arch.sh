@@ -516,10 +516,7 @@ git clone https://github.com/BetaLost/dotfiles.git
 
 # Configure dwm scripts
 mv \$HOME/dotfiles/.xsession \$HOME/
-mv \$HOME/dotfiles/dwmbar.sh \$HOME/.config/
-mv \$HOME/dotfiles/prayer.sh \$HOME/.config/
-mv \$HOME/dotfiles/utilities.sh \$HOME/.config/
-mv \$HOME/dotfiles/emojis.txt \$HOME/.config/
+mv \$HOME/dotfiles/scripts \$HOME/.config/
 
 sed -i "s/_BACKLIGHT_/$BACKLIGHT/" \$HOME/.config/dwmbar.sh
 sed -i "s/_BACKLIGHT_/$BACKLIGHT/" \$HOME/.config/utilities.sh
@@ -530,9 +527,7 @@ sed -i "s/_COUNTRY_/$PRAYER_COUNTRY/" \$HOME/.config/prayer.sh
 sed -i "s/_CITY_/$PRAYER_CITY/" \$HOME/.config/prayer.sh
 
 sudo chmod 777 \$HOME/.xsession
-sudo chmod 777 \$HOME/.config/dwmbar.sh
-sudo chmod 777 \$HOME/.config/prayer.sh
-sudo chmod 777 \$HOME/.config/utilities.sh
+for script in \$HOME/.config/scripts/*.sh; do sudo chmod 777 $script; done
 
 # Configure ZSH
 git clone https://github.com/zsh-users/zsh-autosuggestions.git \$HOME/.zsh/zsh-autosuggestions
