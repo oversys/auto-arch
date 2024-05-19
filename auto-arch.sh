@@ -490,6 +490,9 @@ mv \$HOME/dotfiles/waybar \$HOME/.config/
 sed -i "s/__BACKLIGHT__/$BACKLIGHT/" \$HOME/.config/waybar/config.jsonc
 sed -i "s/__NET__/$NET_INTERFACE/" \$HOME/.config/waybar/config.jsonc
 
+# Configure kitty
+mv \$HOME/dotfiles/kitty \$HOME/.config/
+
 # Configure ZSH
 git clone https://github.com/zsh-users/zsh-autosuggestions.git \$HOME/.zsh/zsh-autosuggestions
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \$HOME/.zsh/zsh-syntax-highlighting
