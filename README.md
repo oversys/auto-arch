@@ -4,6 +4,7 @@
 * *Display Server Protocol:* `Wayland`
 * *Compositor:* `Hyprland`
 * *Status Bar:* `Waybar`
+* *Sound Server:* `PipeWire`
 * *Terminal Emulator:* `kitty`
 
 ## Instructions
