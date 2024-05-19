@@ -482,13 +482,13 @@ git clone https://github.com/BetaLost/dotfiles.git
 mv \$HOME/dotfiles/hypr \$HOME/.config/
 for script in \$HOME/.config/hypr/scripts/*.sh; do sudo chmod 777 $script; done
 
-sed -i "s/_COUNTRY_/$PRAYER_COUNTRY/" \$HOME/.config/hypr/scripts/prayer.sh
-sed -i "s/_CITY_/$PRAYER_CITY/" \$HOME/.config/hypr/scripts/prayer.sh
+sed -i "s/__COUNTRY__/$PRAYER_COUNTRY/" \$HOME/.config/hypr/scripts/prayer.sh
+sed -i "s/__CITY__/$PRAYER_CITY/" \$HOME/.config/hypr/scripts/prayer.sh
 
 # Configure Waybar
 mv \$HOME/dotfiles/waybar \$HOME/.config/
-sed -i "s/_BACKLIGHT_/$BACKLIGHT/" \$HOME/.config/waybar/config.jsonc
-sed -i "s/_NET_/$NET_INTERFACE/" \$HOME/.config/waybar/config.jsonc
+sed -i "s/__BACKLIGHT__/$BACKLIGHT/" \$HOME/.config/waybar/config.jsonc
+sed -i "s/__NET__/$NET_INTERFACE/" \$HOME/.config/waybar/config.jsonc
 
 # Configure ZSH
 git clone https://github.com/zsh-users/zsh-autosuggestions.git \$HOME/.zsh/zsh-autosuggestions
