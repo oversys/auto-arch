@@ -115,7 +115,7 @@ done
 
 clear
 
-# Select backlight (REQUIRED FOR: dwmbar.sh, utilities.sh)
+# Select backlight (REQUIRED FOR: waybar)
 BACKLIGHTS=($(ls /sys/class/backlight))
 
 select backlight in "${BACKLIGHTS[@]}"; do
@@ -125,7 +125,7 @@ done
 
 clear
 
-# Select network interface (REQUIRED FOR: dwmbar.sh)
+# Select network interface (REQUIRED FOR: waybar)
 NET_DEVICES=($(ls /sys/class/net))
 
 select interface in "${NET_DEVICES[@]}"; do
@@ -324,35 +324,49 @@ BLUETOOTH_PKGS=(
 )
 
 AUDIO_PKGS=(
-	"pulseaudio"
-	"pulsemixer"
-	"pulseaudio-bluetooth"
-	"alsa-firmware"
-	"alsa-plugins"
-	"alsa-utils"
+	"pipewire-pulse"
+	"wireplumber"
 	"sof-firmware"
 )
 
-CUSTOM_PKGS=(
-	"xorg-xinit" # X System
-	"xorg-xrandr" # X System
-	"xorg-server" # X System
- 	"xorg-xinput" # X System
-	"xorg-xsetroot" # X System
-	"libx11" # X System
-	"libxft" # X System
-	"libxinerama" # X System
+SYSTEM_PKGS=(
+	"hyprland" # Wayland compositor
+ 	"hyprpaper" # Wayland wallpaper tool
+   	"grim" # Wayland screenshot tool
+    	"slurp" # Wayland region selector
+     	"wl-clipboard" # Wayland clipboard utilities
 	"freetype2" # Fonts
 	"fontconfig" # Fonts
-	"lightdm" # Display manager
-	"lightdm-webkit2-greeter" # LightDM theme
 	"brightnessctl" # Manage brightness
 	"zsh" # Z Shell
 	"cifs-utils" # Mount Common Internet File System
 	"ntfs-3g" # Mount New Technology File System
-	"flameshot" # Screenshot tool
- 	"okular" # PDF Reader
+	"exa" # ls alternative
+	"wget" # Retrieve content
+	"git" # Git
+	"man" # Manual
+	"dunst" # Notifications
+	"zip" # Zip files
+	"unzip" # Unzip files
+ 	"jq" # JSON Processor
+	"ttf-joypixels" # Emoji font
+)
+
+PYTHON_PKGS=(
+	"python-pip" # Install Python modules/packages
+	"imagemagick" # Pywal dependency
+	"python-pywal" # Pywal
+)
+
+CUSTOM_PKGS=(
 	"neovim" # Text Editor
+ 	"okular" # PDF Reader
+	"github-cli" # Github CLI
+	"neofetch" # System info
+	"powertop" # Power consumption monitor
+)
+
+LSP_PKGS=(
 	"nodejs" # TSServer dependency
 	"npm" # TSServer dependency
 	"typescript-language-server" # TS/JS Server
@@ -360,30 +374,9 @@ CUSTOM_PKGS=(
 	"clang" # C-Family Language Server
 	"pyright" # Python Language Server
 	"lua-language-server" # Lua Language Server
- 	"powertop" # Power consumption monitor
-	"htop" # System monitor
-	"exa" # ls alternative
-	"bat" # cat alternative
-	"wget" # Retrieve content
-	"git" # Git
-	"man" # Manual
-	"github-cli" # Github CLI
-	"dunst" # Notifications
-	"zip" # Zip files
-	"unzip" # Unzip files
-	"feh" # Image tool
- 	"jq" # JSON Processor
-  	"neofetch" # System info
-	"python-pip" # Install Python modules/packages
-	"imagemagick" # Pywal dependency
-	"python-pywal" # Pywal
-	"xclip" # Copy to clipboard
-	"ttf-joypixels" # Emoji font
-	"libxcursor" # Cursor dependency
-	"libpng" # Cursor dependency
 )
 
-PKGS=(${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${CUSTOM_PKGS[@]} $MICROCODE_PKG)
+PKGS=(${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${SYSTEM_PKGS[@] ${PYTHON_PKGS[@] ${CUSTOM_PKGS[@]} ${LSP_PKGS[@]} $MICROCODE_PKG)
 
 until pacstrap /mnt "${PKGS[@]}"; do
 	echo -e "\e[4;95mRetry?\e[0m"
@@ -451,10 +444,9 @@ arch-chroot /mnt /bin/bash installation.sh
 cat << EOF > /mnt/home/$USERNAME/customization.sh
 AUR_PKGS=(
 	"nerd-fonts-jetbrains-mono" # JetBrains Mono Nerd Font
-	"ttf-poppins" # Poppins font
-	"picom-ftlabs-git" # Picom compositor
 	"brave-bin" # Brave Browser
   	"auto-cpufreq" # Power Management
+   	"vscode-langservers-extracted" # HTML/CSS/JSON/ESLint language servers extracted from vscode
 )
 
 # Tool to switch between GPU modes on Optimus systems
@@ -474,23 +466,6 @@ done
 sudo auto-cpufreq --install
 if [ $GPU_BRAND == "NVIDIA" ]; then sudo envycontrol -s hybrid --rtd3 3; fi
 
-# Create dwm desktop entry
-sudo mkdir -p /usr/share/xsessions
-sudo chmod 777 /usr/share/xsessions
-sudo printf "[Desktop Entry]\nEncoding=UTF-8\nName=dwm\nExec=default" > /usr/share/xsessions/dwm.desktop
-
-# Install LightDM Aether theme
-git clone https://github.com/NoiSek/Aether.git
-sudo mv Aether /usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether
-sudo sed -i 's/^webkit_theme\s*=\s*\(.*\)/webkit_theme = lightdm-webkit-theme-aether #\1/g' /etc/lightdm/lightdm-webkit2-greeter.conf
-sudo sed -i "s/#greeter-session=example-gtk-gnome/greeter-session=lightdm-webkit2-greeter/g" /etc/lightdm/lightdm.conf
-sudo sed -i "s/#user-session=default/user-session=dwm/g" /etc/lightdm/lightdm.conf
-sudo systemctl enable lightdm.service
-
-# Set account icon
-sudo cp /usr/share/lightdm-webkit/themes/lightdm-webkit-theme-aether/src/img/default-user.png \$HOME/.face
-sudo chmod 644 \$HOME/.face
-
 # Change default shell
 sudo chsh -s /bin/zsh \$USER
 
@@ -498,36 +473,21 @@ sudo chsh -s /bin/zsh \$USER
 mkdir -p \$HOME/.config
 mkdir \$HOME/.config/prayerhistory
 
-# Install and configure dwm
-git clone https://github.com/BetaLost/dwm.git \$HOME/.config/dwm
-cd \$HOME/.config/dwm
-
-# Install and configure st
-git clone https://github.com/BetaLost/st.git \$HOME/.config/st
-cd \$HOME/.config/st
-
-# Install and configure dmenu
-git clone https://github.com/BetaLost/dmenu.git \$HOME/.config/dmenu
-cd \$HOME/.config/dmenu
-
 # Download dotfiles
 cd \$HOME
 git clone https://github.com/BetaLost/dotfiles.git
 
-# Configure dwm scripts
-mv \$HOME/dotfiles/.xsession \$HOME/
-mv \$HOME/dotfiles/scripts \$HOME/.config/
+# Configure Hyprland
+mv \$HOME/dotfiles/hypr \$HOME/.config/
+for script in \$HOME/.config/hypr/scripts/*.sh; do sudo chmod 777 $script; done
 
-sed -i "s/_BACKLIGHT_/$BACKLIGHT/" \$HOME/.config/dwmbar.sh
-sed -i "s/_BACKLIGHT_/$BACKLIGHT/" \$HOME/.config/utilities.sh
+sed -i "s/_COUNTRY_/$PRAYER_COUNTRY/" \$HOME/.config/hypr/scripts/prayer.sh
+sed -i "s/_CITY_/$PRAYER_CITY/" \$HOME/.config/hypr/scripts/prayer.sh
 
-sed -i "s/_NET_/$NET_INTERFACE/" \$HOME/.config/dwmbar.sh
-
-sed -i "s/_COUNTRY_/$PRAYER_COUNTRY/" \$HOME/.config/prayer.sh
-sed -i "s/_CITY_/$PRAYER_CITY/" \$HOME/.config/prayer.sh
-
-sudo chmod 777 \$HOME/.xsession
-for script in \$HOME/.config/scripts/*.sh; do sudo chmod 777 $script; done
+# Configure Waybar
+mv \$HOME/dotfiles/waybar \$HOME/.config/
+sed -i "s/_BACKLIGHT_/$BACKLIGHT/" \$HOME/.config/waybar/config.jsonc
+sed -i "s/_NET_/$NET_INTERFACE/" \$HOME/.config/waybar/config.jsonc
 
 # Configure ZSH
 git clone https://github.com/zsh-users/zsh-autosuggestions.git \$HOME/.zsh/zsh-autosuggestions
@@ -541,13 +501,9 @@ mv \$HOME/dotfiles/.bashrc \$HOME/
 curl -fLo \$HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 mv \$HOME/dotfiles/nvim \$HOME/.config/
 nvim -c "PlugInstall | q | q"
-sed -i "s/background = '#282923'/background = '#1a1a18'/g" \$HOME/.local/share/nvim/plugged/ofirkai.nvim/lua/ofirkai/design.lua
 
 # Configure dunst
 sudo mv \$HOME/dotfiles/dunst \$HOME/.config/
-
-# Configure Picom 
-sudo mv \$HOME/dotfiles/picom \$HOME/.config/
 
 # Configure Neofetch 
 sudo mv \$HOME/dotfiles/neofetch \$HOME/.config/
