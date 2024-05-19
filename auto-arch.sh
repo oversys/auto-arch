@@ -359,6 +359,7 @@ PYTHON_PKGS=(
 )
 
 CUSTOM_PKGS=(
+	"kitty" # Terminal Emulator
 	"neovim" # Text Editor
  	"okular" # PDF Reader
 	"github-cli" # Github CLI
