@@ -115,7 +115,7 @@ done
 
 clear
 
-# Select backlight (REQUIRED FOR: waybar)
+# Select backlight (REQUIRED FOR: Hyprland, Waybar)
 BACKLIGHTS=($(ls /sys/class/backlight))
 
 select backlight in "${BACKLIGHTS[@]}"; do
@@ -125,7 +125,7 @@ done
 
 clear
 
-# Select network interface (REQUIRED FOR: waybar)
+# Select network interface (REQUIRED FOR: Waybar)
 NET_DEVICES=($(ls /sys/class/net))
 
 select interface in "${NET_DEVICES[@]}"; do
@@ -480,6 +480,7 @@ git clone https://github.com/BetaLost/dotfiles.git
 
 # Configure Hyprland
 mv \$HOME/dotfiles/hypr \$HOME/.config/
+sed -i "s/__BACKLIGHT__/$BACKLIGHT/" \$HOME/.config/hypr/hyprland.conf
 for script in \$HOME/.config/hypr/scripts/*.sh; do sudo chmod 777 $script; done
 
 sed -i "s/__COUNTRY__/$PRAYER_COUNTRY/" \$HOME/.config/hypr/scripts/prayer.sh
