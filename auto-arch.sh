@@ -515,6 +515,9 @@ sudo mv \$HOME/dotfiles/neofetch \$HOME/.config/
 # Wallpapers
 sudo mv \$HOME/dotfiles/wallpapers \$HOME/.config/
 
+# Pywal templates
+sudo mv \$HOME/dotfiles/wal \$HOME/.config/
+
 # Install Arabic font
 wget https://github.com/BetaLost/auto-arch/raw/main/khebrat-musamim.zip
 unzip khebrat-musamim.zip
