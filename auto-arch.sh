@@ -496,7 +496,7 @@ mv \$HOME/dotfiles/kitty \$HOME/.config/
 
 # Configure ZSH
 git clone https://github.com/zsh-users/zsh-autosuggestions.git \$HOME/.zsh/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \$HOME/.zsh/zsh-syntax-highlighting
+git clone https://github.com/zdharma-continuum/fast-syntax-highlighting \$HOME/.zsh/fast-syntax-highlighting
 mv \$HOME/dotfiles/.zshrc \$HOME/
 
 # Configure BASH
