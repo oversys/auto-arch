@@ -331,10 +331,6 @@ AUDIO_PKGS=(
 
 SYSTEM_PKGS=(
 	"hyprland" # Wayland compositor
- 	"hyprpaper" # Wayland wallpaper tool
-   	"grim" # Wayland screenshot tool
-    	"slurp" # Wayland region selector
-     	"wl-clipboard" # Wayland clipboard utilities
 	"freetype2" # Fonts
 	"fontconfig" # Fonts
 	"brightnessctl" # Manage brightness
@@ -359,6 +355,11 @@ PYTHON_PKGS=(
 )
 
 CUSTOM_PKGS=(
+	"hyprpaper" # Wayland wallpaper tool
+   	"grim" # Wayland screenshot tool
+    	"slurp" # Wayland region selector
+     	"wl-clipboard" # Wayland clipboard utilities
+      	"fuzzel" # Wayland application launcher
 	"kitty" # Terminal Emulator
 	"neovim" # Text Editor
  	"okular" # PDF Reader
@@ -509,6 +510,9 @@ nvim -c "PlugInstall | q | q"
 
 # Configure dunst
 sudo mv \$HOME/dotfiles/dunst \$HOME/.config/
+
+# Configure fuzzel
+sudo mv \$HOME/dotfiles/fuzzel \$HOME/.config/
 
 # Configure Neofetch 
 sudo mv \$HOME/dotfiles/neofetch \$HOME/.config/
