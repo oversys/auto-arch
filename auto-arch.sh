@@ -116,6 +116,7 @@ done
 clear
 
 # Select backlight (REQUIRED FOR: Hyprland, Waybar)
+echo -e "Select \e[4;33mBacklight\e[0m:"
 BACKLIGHTS=($(ls /sys/class/backlight))
 
 select backlight in "${BACKLIGHTS[@]}"; do
@@ -126,6 +127,7 @@ done
 clear
 
 # Select network interface (REQUIRED FOR: Waybar)
+echo -e "Select \e[4;33mNetwork Interface\e[0m:"
 NET_DEVICES=($(ls /sys/class/net))
 
 select interface in "${NET_DEVICES[@]}"; do
@@ -378,7 +380,7 @@ LSP_PKGS=(
 	"lua-language-server" # Lua Language Server
 )
 
-PKGS=(${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${SYSTEM_PKGS[@] ${PYTHON_PKGS[@] ${CUSTOM_PKGS[@]} ${LSP_PKGS[@]} $MICROCODE_PKG)
+PKGS=(${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${SYSTEM_PKGS[@]} ${PYTHON_PKGS[@]} ${CUSTOM_PKGS[@]} ${LSP_PKGS[@]} $MICROCODE_PKG)
 
 until pacstrap /mnt "${PKGS[@]}"; do
 	echo -e "\e[4;95mRetry?\e[0m"
