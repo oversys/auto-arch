@@ -347,6 +347,7 @@ SYSTEM_PKGS=(
 	"zip" # Zip files
 	"unzip" # Unzip files
  	"jq" # JSON Processor
+  	"bc" # Basic Calculator
 	"ttf-joypixels" # Emoji font
 )
 
@@ -357,6 +358,7 @@ PYTHON_PKGS=(
 )
 
 CUSTOM_PKGS=(
+	"waybar" # Wayland status bar
 	"hyprpaper" # Wayland wallpaper tool
    	"grim" # Wayland screenshot tool
     	"slurp" # Wayland region selector
