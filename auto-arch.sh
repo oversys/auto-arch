@@ -508,9 +508,7 @@ mv \$HOME/dotfiles/.zshrc \$HOME/
 mv \$HOME/dotfiles/.bashrc \$HOME/
 
 # Configure neovim
-curl -fLo \$HOME/.local/share/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 mv \$HOME/dotfiles/nvim \$HOME/.config/
-nvim -c "PlugInstall | q | q"
 
 # Configure dunst
 sudo mv \$HOME/dotfiles/dunst \$HOME/.config/
