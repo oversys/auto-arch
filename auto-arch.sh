@@ -115,28 +115,6 @@ done
 
 clear
 
-# Select backlight (REQUIRED FOR: Hyprland, Waybar)
-echo -e "Select \e[4;33mBacklight\e[0m:"
-BACKLIGHTS=($(ls /sys/class/backlight))
-
-select backlight in "${BACKLIGHTS[@]}"; do
-	BACKLIGHT=$backlight
-	break
-done
-
-clear
-
-# Select network interface (REQUIRED FOR: Waybar)
-echo -e "Select \e[4;33mNetwork Interface\e[0m:"
-NET_DEVICES=($(ls /sys/class/net))
-
-select interface in "${NET_DEVICES[@]}"; do
-	NET_INTERFACE=$interface
-	break
-done
-
-clear
-
 # Enter country (REQUIRED FOR: prayer.sh)
 printf "Enter \e[4;95mCountry name or ISO 3166 code (ex: Netherlands or NL)\e[0m: "
 read PRAYER_COUNTRY
@@ -261,8 +239,6 @@ echo -e "\e[4;31mREGION (TIMEZONE):\e[0m $SELECTED_REGION"
 echo -e "\e[4;31mCITY (TIMEZONE):\e[0m $SELECTED_CITY"
 echo -e "\e[4;31mCPU BRAND:\e[0m $CPU_BRAND"
 echo -e "\e[4;31mGPU BRAND:\e[0m $GPU_BRAND"
-echo -e "\e[4;31mBACKLIGHT:\e[0m $BACKLIGHT"
-echo -e "\e[4;31mNET INTERFACE:\e[0m $NET_INTERFACE"
 echo -e "\e[4;31mCOUNTRY (PRAYER):\e[0m $PRAYER_COUNTRY"
 echo -e "\e[4;31mCITY (PRAYER):\e[0m $PRAYER_CITY"
 echo -e "\e[4;31mHOSTNAME:\e[0m $HOSTNAME"
@@ -485,7 +461,6 @@ git clone https://github.com/BetaLost/dotfiles.git
 
 # Configure Hyprland
 mv \$HOME/dotfiles/hypr \$HOME/.config/
-sed -i "s/__BACKLIGHT__/$BACKLIGHT/" \$HOME/.config/hypr/hyprland.conf
 for script in \$HOME/.config/hypr/scripts/*.sh; do sudo chmod 777 $script; done
 
 sed -i "s/__COUNTRY__/$PRAYER_COUNTRY/" \$HOME/.config/hypr/scripts/prayer.sh
@@ -493,8 +468,6 @@ sed -i "s/__CITY__/$PRAYER_CITY/" \$HOME/.config/hypr/scripts/prayer.sh
 
 # Configure Waybar
 mv \$HOME/dotfiles/waybar \$HOME/.config/
-sed -i "s/__BACKLIGHT__/$BACKLIGHT/" \$HOME/.config/waybar/config.jsonc
-sed -i "s/__NET__/$NET_INTERFACE/" \$HOME/.config/waybar/config.jsonc
 
 # Configure kitty
 mv \$HOME/dotfiles/kitty \$HOME/.config/
