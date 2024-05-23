@@ -493,7 +493,8 @@ sudo mv \$HOME/dotfiles/fuzzel \$HOME/.config/
 sudo mv \$HOME/dotfiles/neofetch \$HOME/.config/
 
 # Wallpapers
-sudo mv \$HOME/dotfiles/wallpapers \$HOME/.config/
+git clone https://github.com/BetaLost/wallpapers.git
+sudo mv \$HOME/wallpapers/wallpapers \$HOME/.config/
 
 # Pywal templates
 sudo mv \$HOME/dotfiles/wal \$HOME/.config/
@@ -528,7 +529,7 @@ sudo mv macOSBigSur /usr/share/icons/
 
 sudo sed -i "s/Inherits=Adwaita/Inherits=macOSBigSur/g" /usr/share/icons/default/index.theme
 
-rm -rf \$HOME/dotfiles \$0
+rm -rf \$HOME/dotfiles \$HOME/wallpapers \$0
 
 exit
 EOF
