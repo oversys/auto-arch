@@ -339,7 +339,7 @@ CUSTOM_PKGS=(
    	"grim" # Wayland screenshot tool
     	"slurp" # Wayland region selector
      	"wl-clipboard" # Wayland clipboard utilities
-      	"fuzzel" # Wayland application launcher
+      	"rofi-wayland" # Wayland fork of rofi
 	"kitty" # Terminal Emulator
 	"neovim" # Text Editor
  	"okular" # PDF Reader
