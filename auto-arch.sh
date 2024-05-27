@@ -486,8 +486,8 @@ mv \$HOME/dotfiles/nvim \$HOME/.config/
 # Configure dunst
 sudo mv \$HOME/dotfiles/dunst \$HOME/.config/
 
-# Configure fuzzel
-sudo mv \$HOME/dotfiles/fuzzel \$HOME/.config/
+# Configure rofi
+sudo mv \$HOME/dotfiles/rofi \$HOME/.config/
 
 # Configure Neofetch 
 sudo mv \$HOME/dotfiles/neofetch \$HOME/.config/
