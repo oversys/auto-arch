@@ -145,8 +145,7 @@ else
 fi
 
 # Confirm inputted data
-whiptail --title "$title" --yesno "**CONFIRM INFO**
-BOOT PARTITION: $BOOTDEV
+whiptail --title "$title" --yesno "BOOT PARTITION: $BOOTDEV
 ROOT PARTITION: $ROOTDEV
 REGION (TIMEZONE): $SELECTED_REGION
 CITY (TIMEZONE): $SELECTED_CITY
@@ -156,7 +155,9 @@ COUNTRY (PRAYER): $PRAYER_COUNTRY
 CITY (PRAYER): $PRAYER_CITY
 HOSTNAME: $HOSTNAME
 USERNAME: $USERNAME
-ROOT AND USER SAME PASSWORD?: $SAME_PASSWORD" 0 0
+ROOT AND USER SAME PASSWORD?: $SAME_PASSWORD
+
+Proceed with installation?" 0 0
 
 if [ $? -ne 0 ]; then msgbox "Cancelling installation..." && exit; fi
 
@@ -244,8 +245,9 @@ CUSTOM_PKGS=(
 	"neovim" # Text Editor
 	"okular" # PDF Reader
 	"github-cli" # Github CLI
-	"neofetch" # System info
+	"fastfetch" # System info
 	"powertop" # Power consumption monitor
+	"btop" # System resources monitor
 )
 
 LSP_PKGS=(
@@ -327,8 +329,8 @@ cat << EOF > /mnt/home/$USERNAME/customization.sh
 AUR_PKGS=(
 	"nerd-fonts-jetbrains-mono" # JetBrains Mono Nerd Font
 	"brave-bin" # Brave Browser
-  	"auto-cpufreq" # Power Management
-   	"vscode-langservers-extracted" # HTML/CSS/JSON/ESLint language servers extracted from vscode
+	"auto-cpufreq" # Power Management
+	"vscode-langservers-extracted" # HTML/CSS/JSON/ESLint language servers extracted from vscode
 )
 
 # Tool to switch between GPU modes on Optimus systems
@@ -389,8 +391,8 @@ sudo mv \$HOME/dotfiles/dunst \$HOME/.config/
 # Configure rofi
 sudo mv \$HOME/dotfiles/rofi \$HOME/.config/
 
-# Configure Neofetch 
-sudo mv \$HOME/dotfiles/neofetch \$HOME/.config/
+# Configure fastfetch 
+sudo mv \$HOME/dotfiles/fastfetch \$HOME/.config/
 
 # Wallpapers
 git clone https://github.com/BetaLost/wallpapers.git
