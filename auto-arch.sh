@@ -212,6 +212,7 @@ SYSTEM_PKGS=(
 	"hyprland" # Wayland compositor
 	"freetype2" # Fonts
 	"fontconfig" # Fonts
+	"ttf-jetbrains-mono-nerd" # JetBrains Mono Nerd Font
 	"brightnessctl" # Manage brightness
 	"zsh" # Z Shell
 	"cifs-utils" # Mount Common Internet File System
@@ -327,7 +328,6 @@ arch-chroot /mnt /bin/bash installation.sh
 
 cat << EOF > /mnt/home/$USERNAME/customization.sh
 AUR_PKGS=(
-	"nerd-fonts-jetbrains-mono" # JetBrains Mono Nerd Font
 	"brave-bin" # Brave Browser
 	"auto-cpufreq" # Power Management
 	"vscode-langservers-extracted" # HTML/CSS/JSON/ESLint language servers extracted from vscode
