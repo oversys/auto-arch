@@ -365,8 +365,10 @@ git clone https://github.com/BetaLost/dotfiles.git
 mv \$HOME/dotfiles/hypr \$HOME/.config/
 for script in \$HOME/.config/hypr/scripts/*.sh; do sudo chmod 777 $script; done
 
-sed -i "s/__COUNTRY__/$PRAYER_COUNTRY/" \$HOME/.config/hypr/scripts/prayer.sh
-sed -i "s/__CITY__/$PRAYER_CITY/" \$HOME/.config/hypr/scripts/prayer.sh
+if [ -n "$PRAYER_COUNTRY" ] && [ -n "$PRAYER_CITY" ]; then
+	sed -i "s/__COUNTRY__/$PRAYER_COUNTRY/" \$HOME/.config/hypr/scripts/prayer.sh
+	sed -i "s/__CITY__/$PRAYER_CITY/" \$HOME/.config/hypr/scripts/prayer.sh
+fi
 
 # Configure Waybar
 mv \$HOME/dotfiles/waybar \$HOME/.config/
