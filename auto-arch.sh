@@ -82,6 +82,9 @@ case $GPU_BRAND in
 	AMD) GPU_PKGS=("xf86-video-amdgpu" "vulkan-radeon" "lib32-vulkan-radeon");;
 esac
 
+# Install power optimizer
+if whiptail --title "$title" --yesno "Install auto-cpufreq?" 0 0; then POWER_OPTIMIZER=1; fi
+
 # Enter country (REQUIRED FOR: prayer.sh)
 PRAYER_COUNTRY=$(input_box "Enter Country name or ISO 3166 code (ex: Netherlands or NL):")
 if [ $? -ne 0 ]; then exit; fi
@@ -331,12 +334,14 @@ arch-chroot /mnt /bin/bash installation.sh
 cat << EOF > /mnt/home/$USERNAME/customization.sh
 AUR_PKGS=(
 	"brave-bin" # Brave Browser
-	"auto-cpufreq" # Power Management
 	"vscode-langservers-extracted" # HTML/CSS/JSON/ESLint language servers extracted from vscode
 )
 
 # Tool to switch between GPU modes on Optimus systems
-if [ $GPU_BRAND == "NVIDIA" ]; then AUR_PKGS+=("envycontrol"); fi
+if [ "$GPU_BRAND" == "NVIDIA" ]; then AUR_PKGS+=("envycontrol"); fi
+
+# Automatic CPU speed & power optimizer for Linux
+if [ "$POWER_OPTIMIZER" -eq 1 ]; then AUR_PKGS+=("auto-cpufreq"); fi
 
 # Install AUR packages
 for aurpkg in "\${AUR_PKGS[@]}"; do
@@ -349,8 +354,8 @@ for aurpkg in "\${AUR_PKGS[@]}"; do
 done
 
 # Configure power management tools
-sudo auto-cpufreq --install
-if [ $GPU_BRAND == "NVIDIA" ]; then sudo envycontrol -s hybrid --rtd3 3; fi
+if [ "$POWER_OPTIMIZER" -eq 1 ]; then sudo auto-cpufreq --install; fi
+if [ "$GPU_BRAND" == "NVIDIA" ]; then sudo envycontrol -s hybrid --rtd3 3; fi
 
 # Change default shell
 sudo chsh -s /bin/zsh \$USER
