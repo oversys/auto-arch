@@ -168,7 +168,8 @@ timedatectl set-ntp true
 mount $ROOTDEV /mnt
 mount --mkdir $BOOTDEV /mnt/boot
 
-printf "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
+sed -i "s/#Color/Color/g" /etc/pacman.conf
 sed -i "s/#ParallelDownloads/ParallelDownloads/g" /etc/pacman.conf
 sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g" /etc/makepkg.conf
 
@@ -217,7 +218,7 @@ SYSTEM_PKGS=(
 	"zsh" # Z Shell
 	"cifs-utils" # Mount Common Internet File System
 	"ntfs-3g" # Mount New Technology File System
-	"exa" # ls alternative
+	"eza" # ls alternative
 	"wget" # Retrieve content
 	"git" # Git
 	"man" # Manual
@@ -244,7 +245,7 @@ CUSTOM_PKGS=(
 	"rofi-wayland" # Wayland fork of rofi
 	"kitty" # Terminal Emulator
 	"neovim" # Text Editor
-	"okular" # PDF Reader
+	"zathura-pdf-mupdf" # PDF Reader
 	"github-cli" # Github CLI
 	"fastfetch" # System info
 	"powertop" # Power consumption monitor
@@ -278,7 +279,8 @@ genfstab -U /mnt >> /mnt/etc/fstab
 
 cat << EOF > /mnt/installation.sh
 # Pacman configuration
-printf "\n[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf
+sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
+sed -i "s/#Color/Color/g" /etc/pacman.conf
 sed -i "s/#ParallelDownloads/ParallelDownloads/g" /etc/pacman.conf
 sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g" /etc/makepkg.conf
 
@@ -363,7 +365,7 @@ git clone https://github.com/BetaLost/dotfiles.git
 
 # Configure Hyprland
 mv \$HOME/dotfiles/hypr \$HOME/.config/
-for script in \$HOME/.config/hypr/scripts/*.sh; do sudo chmod 777 $script; done
+for script in \$HOME/.config/hypr/scripts/*.sh; do sudo chmod 777 \$script; done
 
 if [ -n "$PRAYER_COUNTRY" ] && [ -n "$PRAYER_CITY" ]; then
 	sed -i "s/__COUNTRY__/$PRAYER_COUNTRY/" \$HOME/.config/hypr/scripts/prayer.sh
@@ -381,9 +383,6 @@ git clone https://github.com/zsh-users/zsh-autosuggestions.git \$HOME/.zsh/zsh-a
 git clone https://github.com/zdharma-continuum/fast-syntax-highlighting \$HOME/.zsh/fast-syntax-highlighting
 mv \$HOME/dotfiles/.zshrc \$HOME/
 
-# Configure BASH
-mv \$HOME/dotfiles/.bashrc \$HOME/
-
 # Configure neovim
 mv \$HOME/dotfiles/nvim \$HOME/.config/
 
@@ -395,6 +394,9 @@ sudo mv \$HOME/dotfiles/rofi \$HOME/.config/
 
 # Configure fastfetch 
 sudo mv \$HOME/dotfiles/fastfetch \$HOME/.config/
+
+# Configure zathura
+sudo mv \$HOME/dotfiles/zathura \$HOME/.config/
 
 # Wallpapers
 git clone https://github.com/BetaLost/wallpapers.git
@@ -442,4 +444,4 @@ arch-chroot /mnt /bin/su -c "cd; bash customization.sh" $USERNAME -
 
 # ----------------------------- Complete ----------------------------- 
 
-echo -e "\e[4;34mArch Linux\e[0m has been installed \e[4;32msuccessfully\e[0m on this machine."
+msgbox "Arch Linux has been installed successfully on this machine."
