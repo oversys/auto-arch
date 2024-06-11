@@ -242,6 +242,7 @@ PYTHON_PKGS=(
 CUSTOM_PKGS=(
 	"waybar" # Wayland status bar
 	"hyprpaper" # Wayland wallpaper tool
+	"hyprlock" # Wayland locking utility
 	"grim" # Wayland screenshot tool
 	"slurp" # Wayland region selector
 	"wl-clipboard" # Wayland clipboard utilities
