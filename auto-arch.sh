@@ -320,8 +320,6 @@ sed -i "s/#Color/Color/g" /etc/pacman.conf
 sed -i "s/#ParallelDownloads/ParallelDownloads/g" /etc/pacman.conf
 sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$(nproc)\"/g" /etc/makepkg.conf
 
-pacman -Syy --noconfirm archlinux-keyring
-
 # Time zone
 ln -sf /usr/share/zoneinfo/$SELECTED_REGION/$SELECTED_CITY /etc/localtime
 hwclock --systohc
@@ -447,22 +445,22 @@ sudo mv \$HOME/dotfiles/wal \$HOME/.config/
 FONTS_DIR="/usr/local/share/fonts"
 sudo mkdir -p \$FONTS_DIR
 
-for font in $SELECTED_ARABIC_FONTS; do
+for font in "${SELECTED_ARABIC_FONTS[@]}"; do
 	case \$font in
 		"18 Khebrat Musamim") font_archive="khebrat-musamim.zip";;
-		"Amiri") "Amiri.zip";;
-		"Noto Naskh Arabic") "Noto-Naskh-Arabic.zip";;
-		"SF Arabic") "SF-Arabic.zip";;
+		"Amiri") font_archive="Amiri.zip";;
+		"Noto Naskh Arabic") font_archive="Noto-Naskh-Arabic.zip";;
+		"SF Arabic") font_archive"SF-Arabic.zip";;
 	esac
 
 	wget https://github.com/BetaLost/auto-arch/raw/main/resources/fonts/\$font_archive
 	sudo mv \$font_archive \$FONTS_DIR
-	sudo unzip \$FONTS_DIR/\$font_archive
+	sudo unzip \$FONTS_DIR/\$font_archive -d \$FONTS_DIR
 	sudo rm \$FONTS_DIR/\$font_archive
 done
 
 if [ "$DEFAULT_ARABIC_FONT" != "18 Khebrat Musamim" ]; then
-	sed -i "s/18 Khebrat Musamim/$DEFAULT_ARABIC_FONT" \$HOME/dotfiles/fonts.conf
+	sed -i "s/18 Khebrat Musamim/$DEFAULT_ARABIC_FONT/" \$HOME/dotfiles/fonts.conf
 fi
 sudo mv \$HOME/dotfiles/fonts.conf /etc/fonts/local.conf
 
