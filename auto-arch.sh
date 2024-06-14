@@ -35,12 +35,18 @@ select_partition() {
 select_from_menu() {
 	TOSELECT=$1
 	shift
+	LIMIT_SIZE=$1
+	shift
 	OPTIONS=()
 	for OPTION in "$@"; do
 		OPTIONS+=("${OPTION}" "")
 	done
 
-	whiptail --title "$title" --menu "Select $TOSELECT:" 0 0 10 "${OPTIONS[@]}" 3>&1 1>&2 2>&3
+	if [ $LIMIT_SIZE -eq 1 ]; then
+		whiptail --title "$title" --menu "Select $TOSELECT:" 20 30 12 "${OPTIONS[@]}" 3>&1 1>&2 2>&3
+	else
+		whiptail --title "$title" --menu "Select $TOSELECT:" 0 0 10 "${OPTIONS[@]}" 3>&1 1>&2 2>&3
+	fi
 }
 
 # Select boot partition
@@ -53,17 +59,17 @@ if [ $? -ne 0 ]; then exit; fi
 
 # Select region
 REGIONS=$(ls -l /usr/share/zoneinfo/ | grep '^d' | gawk -F':[0-9]* ' '/:/{print $2}')
-SELECTED_REGION=$(select_from_menu "Region" $REGIONS)
+SELECTED_REGION=$(select_from_menu "Region" 1 $REGIONS)
 if [ $? -ne 0 ]; then exit; fi
 
 # Select city
 CITIES=$(ls /usr/share/zoneinfo/${SELECTED_REGION}/)
-SELECTED_CITY=$(select_from_menu "City" $CITIES)
+SELECTED_CITY=$(select_from_menu "City" 1 $CITIES)
 if [ $? -ne 0 ]; then exit; fi
 
 # Select CPU brand
 CPU_BRANDS=("Intel" "AMD" "Skip CPU microcode installation")
-CPU_BRAND=$(select_from_menu "CPU brand" "${CPU_BRANDS[@]}")
+CPU_BRAND=$(select_from_menu "CPU brand" 0 "${CPU_BRANDS[@]}")
 if [ $? -ne 0 ]; then exit; fi
 
 case $CPU_BRAND in
@@ -73,7 +79,7 @@ esac
 
 # Select GPU brand
 GPU_BRANDS=("NVIDIA" "AMD" "Intel" "Skip GPU driver installation")
-GPU_BRAND=$(select_from_menu "GPU brand" "${GPU_BRANDS[@]}")
+GPU_BRAND=$(select_from_menu "GPU brand" 0 "${GPU_BRANDS[@]}")
 if [ $? -ne 0 ]; then exit; fi
 
 case $GPU_BRAND in
@@ -83,7 +89,30 @@ case $GPU_BRAND in
 esac
 
 # Install power optimizer
-if whiptail --title "$title" --yesno "Install auto-cpufreq?" 0 0; then POWER_OPTIMIZER=1; fi
+if whiptail --title "$title" --yesno "Install auto-cpufreq?" 0 0; then POWER_OPTIMIZER="YES"; fi
+
+# Select default Arabic font
+ARABIC_FONTS=("18 Khebrat Musamim" "Amiri" "Noto Naskh Arabic" "SF Arabic" "Skip Arabic font installation")
+DEFAULT_ARABIC_FONT=$(select_from_menu "Arabic font" 0 "${ARABIC_FONTS[@]}")
+if [ $? -ne 0 ]; then exit; fi
+
+# Select Arabic fonts to install
+if [ "$DEFAULT_ARABIC_FONT" != "Skip Arabic font installation" ]; then
+	CHECKLIST_ITEMS=()
+	for font in "${ARABIC_FONTS[@]}"; do
+	    if [ "$font" != "$DEFAULT_ARABIC_FONT" ] || [ "$font" != "Skip Arabic font installation" ]; then
+	        CHECKLIST_ITEMS+=("$font" "OFF")
+	    fi
+	done
+	
+	SELECTED_ARABIC_FONTS=$(whiptail --title "$title" --noitem --checklist "Select fonts" 0 0 0 "${CHECKLIST_ITEMS[@]}" 3>&1 1>&2 2>&3)
+	if [ $? -ne 0 ]; then exit; fi
+	
+	eval "SELECTED_ARABIC_FONTS=($SELECTED_ARABIC_FONTS)"
+	SELECTED_ARABIC_FONTS+=("$DEFAULT_ARABIC_FONT")
+
+	printf -v JOINED_ARABIC_FONTS '%s, ' "${SELECTED_ARABIC_FONTS[@]}"
+fi
 
 # Enter country (REQUIRED FOR: prayer.sh)
 PRAYER_COUNTRY=$(input_box "Enter Country name or ISO 3166 code (ex: Netherlands or NL):")
@@ -154,6 +183,9 @@ REGION (TIMEZONE): $SELECTED_REGION
 CITY (TIMEZONE): $SELECTED_CITY
 CPU BRAND: $CPU_BRAND
 GPU BRAND: $GPU_BRAND
+INSTALL POWER OPTIMIZER (auto-cpufreq)?: $POWER_OPTIMIZER
+DEFAULT ARABIC FONT: $DEFAULT_ARABIC_FONT
+SELECTED ARABIC FONTS: ${JOINED_ARABIC_FONTS%, }
 COUNTRY (PRAYER): $PRAYER_COUNTRY
 CITY (PRAYER): $PRAYER_CITY
 HOSTNAME: $HOSTNAME
@@ -342,7 +374,7 @@ AUR_PKGS=(
 if [ "$GPU_BRAND" == "NVIDIA" ]; then AUR_PKGS+=("envycontrol"); fi
 
 # Automatic CPU speed & power optimizer for Linux
-if [ "$POWER_OPTIMIZER" -eq 1 ]; then AUR_PKGS+=("auto-cpufreq"); fi
+if [ "$POWER_OPTIMIZER" == "YES" ]; then AUR_PKGS+=("auto-cpufreq"); fi
 
 # Install AUR packages
 for aurpkg in "\${AUR_PKGS[@]}"; do
@@ -355,7 +387,7 @@ for aurpkg in "\${AUR_PKGS[@]}"; do
 done
 
 # Configure power management tools
-if [ "$POWER_OPTIMIZER" -eq 1 ]; then sudo auto-cpufreq --install; fi
+if [ "$POWER_OPTIMIZER" == "YES" ]; then sudo auto-cpufreq --install; fi
 if [ "$GPU_BRAND" == "NVIDIA" ]; then sudo envycontrol -s hybrid --rtd3 3; fi
 
 # Change default shell
@@ -411,15 +443,28 @@ sudo mv \$HOME/wallpapers/wallpapers \$HOME/.config/
 # Pywal templates
 sudo mv \$HOME/dotfiles/wal \$HOME/.config/
 
-# Install Arabic font
-wget https://github.com/BetaLost/auto-arch/raw/main/khebrat-musamim.zip
-unzip khebrat-musamim.zip
-rm khebrat-musamim.zip
-sudo mkdir -p /usr/share/fonts/TTF
-sudo mv "18 Khebrat Musamim Regular.ttf" /usr/share/fonts/TTF/
+# Install Arabic font(s)
+FONTS_DIR="/usr/local/share/fonts"
+sudo mkdir -p \$FONTS_DIR
 
-sudo mv \$HOME/dotfiles/fonts.conf /etc/fonts/
-sudo cp /etc/fonts/fonts.conf /etc/fonts/local.conf
+for font in $SELECTED_ARABIC_FONTS; do
+	case \$font in
+		"18 Khebrat Musamim") font_archive="khebrat-musamim.zip";;
+		"Amiri") "Amiri.zip";;
+		"Noto Naskh Arabic") "Noto-Naskh-Arabic.zip";;
+		"SF Arabic") "SF-Arabic.zip";;
+	esac
+
+	wget https://github.com/BetaLost/auto-arch/raw/main/fonts/\$font_archive
+	sudo mv \$font_archive \$FONTS_DIR
+	sudo unzip \$FONTS_DIR/\$font_archive
+	sudo rm \$FONTS_DIR/\$font_archive
+done
+
+if [ "$DEFAULT_ARABIC_FONT" != "18 Khebrat Musamim" ]; then
+	sed -i "s/18 Khebrat Musamim/$DEFAULT_ARABIC_FONT" \$HOME/dotfiles/fonts.conf
+fi
+sudo mv \$HOME/dotfiles/fonts.conf /etc/fonts/local.conf
 
 # Install GRUB theme
 wget https://github.com/BetaLost/auto-arch/raw/main/arch.tar
