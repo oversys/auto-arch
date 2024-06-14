@@ -93,19 +93,19 @@ if whiptail --title "$title" --yesno "Install auto-cpufreq?" 0 0; then POWER_OPT
 
 # Select default Arabic font
 ARABIC_FONTS=("18 Khebrat Musamim" "Amiri" "Noto Naskh Arabic" "SF Arabic" "Skip Arabic font installation")
-DEFAULT_ARABIC_FONT=$(select_from_menu "Arabic font" 0 "${ARABIC_FONTS[@]}")
+DEFAULT_ARABIC_FONT=$(select_from_menu "default Arabic font" 0 "${ARABIC_FONTS[@]}")
 if [ $? -ne 0 ]; then exit; fi
 
 # Select Arabic fonts to install
 if [ "$DEFAULT_ARABIC_FONT" != "Skip Arabic font installation" ]; then
 	CHECKLIST_ITEMS=()
 	for font in "${ARABIC_FONTS[@]}"; do
-	    if [ "$font" != "$DEFAULT_ARABIC_FONT" ] || [ "$font" != "Skip Arabic font installation" ]; then
+	    if [ "$font" != "$DEFAULT_ARABIC_FONT" ] && [ "$font" != "Skip Arabic font installation" ]; then
 	        CHECKLIST_ITEMS+=("$font" "OFF")
 	    fi
 	done
 	
-	SELECTED_ARABIC_FONTS=$(whiptail --title "$title" --noitem --checklist "Select fonts" 0 0 0 "${CHECKLIST_ITEMS[@]}" 3>&1 1>&2 2>&3)
+	SELECTED_ARABIC_FONTS=$(whiptail --title "$title" --noitem --checklist "Select Arabic fonts" 0 0 0 "${CHECKLIST_ITEMS[@]}" 3>&1 1>&2 2>&3)
 	if [ $? -ne 0 ]; then exit; fi
 	
 	eval "SELECTED_ARABIC_FONTS=($SELECTED_ARABIC_FONTS)"
@@ -262,7 +262,7 @@ SYSTEM_PKGS=(
 	"unzip" # Unzip files
 	"jq" # JSON Processor
 	"bc" # Basic Calculator
-	"ttf-joypixels" # Emoji font
+	"noto-fonts-emoji" # Emoji font
 )
 
 PYTHON_PKGS=(
@@ -455,7 +455,7 @@ for font in $SELECTED_ARABIC_FONTS; do
 		"SF Arabic") "SF-Arabic.zip";;
 	esac
 
-	wget https://github.com/BetaLost/auto-arch/raw/main/fonts/\$font_archive
+	wget https://github.com/BetaLost/auto-arch/raw/main/resources/fonts/\$font_archive
 	sudo mv \$font_archive \$FONTS_DIR
 	sudo unzip \$FONTS_DIR/\$font_archive
 	sudo rm \$FONTS_DIR/\$font_archive
@@ -467,7 +467,7 @@ fi
 sudo mv \$HOME/dotfiles/fonts.conf /etc/fonts/local.conf
 
 # Install GRUB theme
-wget https://github.com/BetaLost/auto-arch/raw/main/arch.tar
+wget https://github.com/BetaLost/auto-arch/raw/main/resources/arch.tar
 sudo mkdir -p /boot/grub/themes
 sudo mkdir /boot/grub/themes/arch
 sudo mv arch.tar /boot/grub/themes/arch/
@@ -479,7 +479,7 @@ sudo sed -i "s/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/g" /et
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 # Install cursor
-wget https://github.com/BetaLost/auto-arch/raw/main/macOSBigSur.tar.gz
+wget https://github.com/BetaLost/auto-arch/raw/main/resources/macOSBigSur.tar.gz
 tar -xf macOSBigSur.tar.gz
 rm macOSBigSur.tar.gz
 sudo mv macOSBigSur /usr/share/icons/
