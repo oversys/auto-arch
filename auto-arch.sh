@@ -89,7 +89,7 @@ case $GPU_BRAND in
 esac
 
 # Install power optimizer
-if whiptail --title "$title" --yesno "Install auto-cpufreq?" 0 0; then POWER_OPTIMIZER="YES"; fi
+if whiptail --title "$title" --yesno "Install auto-cpufreq?" 0 0; then POWER_OPTIMIZER="YES"; else POWER_OPTIMIZER="NO"; fi
 
 # Select default Arabic font
 ARABIC_FONTS=("18 Khebrat Musamim" "Amiri" "Noto Naskh Arabic" "SF Arabic" "Skip Arabic font installation")
