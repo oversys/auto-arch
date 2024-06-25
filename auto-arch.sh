@@ -397,7 +397,7 @@ mkdir \$HOME/.config/prayerhistory
 
 # Download dotfiles
 cd \$HOME
-git clone https://github.com/BetaLost/dotfiles.git
+git clone https://github.com/oversys/dotfiles.git
 
 # Configure Hyprland
 mv \$HOME/dotfiles/hypr \$HOME/.config/
@@ -435,7 +435,7 @@ sudo mv \$HOME/dotfiles/fastfetch \$HOME/.config/
 sudo mv \$HOME/dotfiles/zathura \$HOME/.config/
 
 # Wallpapers
-git clone https://github.com/BetaLost/wallpapers.git
+git clone https://github.com/oversys/wallpapers.git
 sudo mv \$HOME/wallpapers/wallpapers \$HOME/.config/
 
 # Pywal templates
@@ -453,7 +453,7 @@ for font in "${SELECTED_ARABIC_FONTS[@]}"; do
 		"SF Arabic") font_archive"SF-Arabic.zip";;
 	esac
 
-	wget https://github.com/BetaLost/auto-arch/raw/main/resources/fonts/\$font_archive
+	wget https://github.com/oversys/auto-arch/raw/main/resources/fonts/\$font_archive
 	sudo mv \$font_archive \$FONTS_DIR
 	sudo unzip \$FONTS_DIR/\$font_archive -d \$FONTS_DIR
 	sudo rm \$FONTS_DIR/\$font_archive
@@ -465,7 +465,7 @@ fi
 sudo mv \$HOME/dotfiles/fonts.conf /etc/fonts/local.conf
 
 # Install GRUB theme
-wget https://github.com/BetaLost/auto-arch/raw/main/resources/arch.tar
+wget https://github.com/oversys/auto-arch/raw/main/resources/arch.tar
 sudo mkdir -p /boot/grub/themes
 sudo mkdir /boot/grub/themes/arch
 sudo mv arch.tar /boot/grub/themes/arch/
@@ -477,7 +477,7 @@ sudo sed -i "s/#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/g" /et
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 
 # Install cursor
-wget https://github.com/BetaLost/auto-arch/raw/main/resources/macOSBigSur.tar.gz
+wget https://github.com/oversys/auto-arch/raw/main/resources/macOSBigSur.tar.gz
 tar -xf macOSBigSur.tar.gz
 rm macOSBigSur.tar.gz
 sudo mv macOSBigSur /usr/share/icons/
