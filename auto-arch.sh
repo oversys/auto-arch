@@ -254,6 +254,8 @@ SYSTEM_PKGS=(
 	"cifs-utils" # Mount Common Internet File System
 	"ntfs-3g" # Mount New Technology File System
 	"eza" # ls alternative
+	"bat" # cat alternative
+	"ripgrep" # grep alternative
 	"wget" # Retrieve content
 	"git" # Git
 	"man" # Manual
