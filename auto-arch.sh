@@ -466,6 +466,12 @@ if [ "$DEFAULT_ARABIC_FONT" != "18 Khebrat Musamim" ]; then
 fi
 sudo mv \$HOME/dotfiles/fonts.conf /etc/fonts/local.conf
 
+# Install English fonts
+wget https://github.com/oversys/auto-arch/raw/main/resources/fonts/Noto-English.zip
+sudo mv Noto-English.zip \$FONTS_DIR
+sudo unzip \$FONTS_DIR/Noto-English.zip -d \$FONTS_DIR
+sudo rm \$FONTS_DIR/Noto-English.zip
+
 # Install GRUB theme
 wget https://github.com/oversys/auto-arch/raw/main/resources/arch.tar
 sudo mkdir -p /boot/grub/themes
