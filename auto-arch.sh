@@ -92,7 +92,7 @@ esac
 if whiptail --title "$title" --yesno "Install auto-cpufreq?" 0 0; then POWER_OPTIMIZER="YES"; else POWER_OPTIMIZER="NO"; fi
 
 # Select default Arabic font
-ARABIC_FONTS=("18 Khebrat Musamim" "Amiri" "Noto Naskh Arabic" "SF Arabic" "Skip Arabic font installation")
+ARABIC_FONTS=("SST Arabic" "18 Khebrat Musamim" "Amiri" "Noto Naskh Arabic" "SF Arabic" "Skip Arabic font installation")
 DEFAULT_ARABIC_FONT=$(select_from_menu "default Arabic font" 0 "${ARABIC_FONTS[@]}")
 if [ $? -ne 0 ]; then exit; fi
 
@@ -449,6 +449,7 @@ sudo mkdir -p \$FONTS_DIR
 
 for font in "${SELECTED_ARABIC_FONTS[@]}"; do
 	case \$font in
+		"SST Arabic") font_archive="SST-Arabic.zip";;
 		"18 Khebrat Musamim") font_archive="khebrat-musamim.zip";;
 		"Amiri") font_archive="Amiri.zip";;
 		"Noto Naskh Arabic") font_archive="Noto-Naskh-Arabic.zip";;
@@ -461,8 +462,8 @@ for font in "${SELECTED_ARABIC_FONTS[@]}"; do
 	sudo rm \$FONTS_DIR/\$font_archive
 done
 
-if [ "$DEFAULT_ARABIC_FONT" != "18 Khebrat Musamim" ]; then
-	sed -i "s/18 Khebrat Musamim/$DEFAULT_ARABIC_FONT/" \$HOME/dotfiles/fonts.conf
+if [ "$DEFAULT_ARABIC_FONT" != "SST Arabic" ]; then
+	sed -i "s/SST Arabic/$DEFAULT_ARABIC_FONT/" \$HOME/dotfiles/fonts.conf
 fi
 sudo mv \$HOME/dotfiles/fonts.conf /etc/fonts/local.conf
 
