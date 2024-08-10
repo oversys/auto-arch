@@ -132,6 +132,12 @@ if [ -n "$PRAYER_COUNTRY" ]; then
 	fi
 fi
 
+if [ -n "$PRAYER_CITY" ]; then
+	PRAYER_METHODS=("3 - Muslim World League" "4 - Umm Al-Qura University, Makkah" "8 - Gulf Region" "16 - Dubai (unofficial)")
+	PRAYER_METHOD=$(select_from_menu "method for calculating prayer times" 0 "${PRAYER_METHODS[@]}")
+	if [ $? -ne 0 ]; then exit; fi
+fi
+
 # Enter hostname
 HOSTNAME=$(input_box "Enter Hostname:")
 if [ $? -ne 0 ]; then exit; fi
@@ -188,6 +194,7 @@ DEFAULT ARABIC FONT: $DEFAULT_ARABIC_FONT
 SELECTED ARABIC FONTS: ${JOINED_ARABIC_FONTS%, }
 COUNTRY (PRAYER): $PRAYER_COUNTRY
 CITY (PRAYER): $PRAYER_CITY
+METHOD (PRAYER): $PRAYER_METHOD
 HOSTNAME: $HOSTNAME
 USERNAME: $USERNAME
 ROOT AND USER SAME PASSWORD?: $SAME_PASSWORD
@@ -408,6 +415,7 @@ for script in \$HOME/.config/hypr/scripts/*.sh; do sudo chmod 777 \$script; done
 if [ -n "$PRAYER_COUNTRY" ] && [ -n "$PRAYER_CITY" ]; then
 	sed -i "s/__COUNTRY__/$PRAYER_COUNTRY/" \$HOME/.config/hypr/scripts/prayer.sh
 	sed -i "s/__CITY__/$PRAYER_CITY/" \$HOME/.config/hypr/scripts/prayer.sh
+	sed -i "s/__METHOD__/${PRAYER_METHOD%% *}/" \$HOME/.config/hypr/scripts/prayer.sh
 fi
 
 # Configure Waybar
