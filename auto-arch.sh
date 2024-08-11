@@ -115,28 +115,26 @@ if [ "$DEFAULT_ARABIC_FONT" != "Skip Arabic font installation" ]; then
 fi
 
 # Enter country (REQUIRED FOR: prayer.sh)
-PRAYER_COUNTRY=$(input_box "Enter Country name or ISO 3166 code (ex: Netherlands or NL):")
+PRAYER_COUNTRY=$(input_box "prayer.sh: Enter Country name or ISO 3166 code (ex: Netherlands or NL) - Leave empty to fetch location automatically:")
 if [ $? -ne 0 ]; then exit; fi
 
 if [ -z "$PRAYER_COUNTRY" ]; then 
-	msgbox "Prayer times and hijri date will not be functional until you input the country and city in prayer.sh."
+	msgbox "Location will be fetched automatically from ipinfo.io"
 fi
 
 # Enter city (REQUIRED FOR: prayer.sh)
 if [ -n "$PRAYER_COUNTRY" ]; then
-	PRAYER_CITY=$(input_box "Enter City name (ex: Makkah):")
+	PRAYER_CITY=$(input_box "(prayer.sh) Enter City name (ex: Makkah) - Leave empty to fetch location automatically:")
 	if [ $? -ne 0 ]; then exit; fi
 	
 	if [ -z "$PRAYER_CITY" ]; then 
-		msgbox "Prayer times and hijri date will not be functional until you input the country and city in prayer.sh."
+		msgbox "Location will be fetched automatically from ipinfo.io"
 	fi
 fi
 
-if [ -n "$PRAYER_CITY" ]; then
-	PRAYER_METHODS=("3 - Muslim World League" "4 - Umm Al-Qura University, Makkah" "8 - Gulf Region" "16 - Dubai (unofficial)")
-	PRAYER_METHOD=$(select_from_menu "method for calculating prayer times" 0 "${PRAYER_METHODS[@]}")
-	if [ $? -ne 0 ]; then exit; fi
-fi
+PRAYER_METHODS=("3 - Muslim World League (DEFAULT)" "4 - Umm Al-Qura University, Makkah" "8 - Gulf Region" "16 - Dubai (unofficial)")
+PRAYER_METHOD=$(select_from_menu "method for calculating prayer times" 0 "${PRAYER_METHODS[@]}")
+if [ $? -ne 0 ]; then exit; fi
 
 # Enter hostname
 HOSTNAME=$(input_box "Enter Hostname:")
