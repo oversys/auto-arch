@@ -114,8 +114,10 @@ if [ "$DEFAULT_ARABIC_FONT" != "Skip Arabic font installation" ]; then
 	printf -v JOINED_ARABIC_FONTS '%s, ' "${SELECTED_ARABIC_FONTS[@]}"
 fi
 
+msgbox "The following prompt(s) will ask you to enter Country and City. To fetch prayer times from your masjid (mawaqit.net), you can instead enter your masjid ID in prayer.sh (recommended). If neither location nor masjid ID are entered, the location will be fetched automatically based on IP."
+
 # Enter country (REQUIRED FOR: prayer.sh)
-PRAYER_COUNTRY=$(input_box "prayer.sh: Enter Country name or ISO 3166 code (ex: Netherlands or NL) - Leave empty to fetch location automatically:")
+PRAYER_COUNTRY=$(input_box "prayer.sh: Enter Country name or ISO 3166 code (ex: Netherlands or NL):")
 if [ $? -ne 0 ]; then exit; fi
 
 if [ -z "$PRAYER_COUNTRY" ]; then 
@@ -124,7 +126,7 @@ fi
 
 # Enter city (REQUIRED FOR: prayer.sh)
 if [ -n "$PRAYER_COUNTRY" ]; then
-	PRAYER_CITY=$(input_box "(prayer.sh) Enter City name (ex: Makkah) - Leave empty to fetch location automatically:")
+	PRAYER_CITY=$(input_box "(prayer.sh) Enter City name (ex: Makkah):")
 	if [ $? -ne 0 ]; then exit; fi
 	
 	if [ -z "$PRAYER_CITY" ]; then 
@@ -249,11 +251,14 @@ AUDIO_PKGS=(
 	"sof-firmware"
 )
 
+FONT_PKGS=(
+	"freetype2"
+	"fontconfig"
+	"ttf-jetbrains-mono-nerd"
+	"noto-fonts-emoji"
+)
+
 SYSTEM_PKGS=(
-	"hyprland" # Wayland compositor
-	"freetype2" # Fonts
-	"fontconfig" # Fonts
-	"ttf-jetbrains-mono-nerd" # JetBrains Mono Nerd Font
 	"brightnessctl" # Manage brightness
 	"zsh" # Z Shell
 	"cifs-utils" # Mount Common Internet File System
@@ -264,12 +269,10 @@ SYSTEM_PKGS=(
 	"wget" # Retrieve content
 	"git" # Git
 	"man" # Manual
-	"dunst" # Notifications
 	"zip" # Zip files
 	"unzip" # Unzip files
 	"jq" # JSON Processor
 	"bc" # Basic Calculator
-	"noto-fonts-emoji" # Emoji font
 )
 
 PYTHON_PKGS=(
@@ -279,6 +282,7 @@ PYTHON_PKGS=(
 )
 
 CUSTOM_PKGS=(
+	"hyprland" # Wayland compositor
 	"waybar" # Wayland status bar
 	"hyprpaper" # Wayland wallpaper tool
 	"hyprlock" # Wayland locking utility
@@ -286,6 +290,8 @@ CUSTOM_PKGS=(
 	"slurp" # Wayland region selector
 	"wl-clipboard" # Wayland clipboard utilities
 	"rofi-wayland" # Wayland fork of rofi
+	"ly" # TUI Display Manager
+	"dunst" # Notifications
 	"kitty" # Terminal Emulator
 	"neovim" # Text Editor
 	"zathura-pdf-mupdf" # PDF Reader
@@ -305,7 +311,7 @@ LSP_PKGS=(
 	"lua-language-server" # Lua Language Server
 )
 
-PKGS=(${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${SYSTEM_PKGS[@]} ${PYTHON_PKGS[@]} ${CUSTOM_PKGS[@]} ${LSP_PKGS[@]} $MICROCODE_PKG)
+PKGS=(${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${FONT_PKGS[@]} ${SYSTEM_PKGS[@]} ${PYTHON_PKGS[@]} ${CUSTOM_PKGS[@]} ${LSP_PKGS[@]} $MICROCODE_PKG)
 
 until pacstrap /mnt "${PKGS[@]}"; do
 	echo -e "\e[4;95mRetry?\e[0m"
@@ -441,6 +447,9 @@ sudo mv \$HOME/dotfiles/fastfetch \$HOME/.config/
 
 # Configure zathura
 sudo mv \$HOME/dotfiles/zathura \$HOME/.config/
+
+# Configure ly
+sudo mv \$HOME/dotfiles/ly /etc/
 
 # Wallpapers
 git clone https://github.com/oversys/wallpapers.git
