@@ -92,7 +92,7 @@ esac
 if whiptail --title "$title" --yesno "Install auto-cpufreq?" 0 0; then POWER_OPTIMIZER="YES"; else POWER_OPTIMIZER="NO"; fi
 
 # Select default Arabic font
-ARABIC_FONTS=("SST Arabic" "18 Khebrat Musamim" "Amiri" "Noto Naskh Arabic" "SF Arabic" "Skip Arabic font installation")
+ARABIC_FONTS=("SST Arabic" "RB" "Amiri" "Noto Naskh Arabic" "SF Arabic" "Khebrat Musamim" "Skip Arabic font installation")
 DEFAULT_ARABIC_FONT=$(select_from_menu "default Arabic font" 0 "${ARABIC_FONTS[@]}")
 if [ $? -ne 0 ]; then exit; fi
 
@@ -450,6 +450,7 @@ sudo mv \$HOME/dotfiles/zathura \$HOME/.config/
 
 # Configure ly
 sudo mv \$HOME/dotfiles/ly /etc/
+sudo systemctl enable ly.service
 
 # Wallpapers
 git clone https://github.com/oversys/wallpapers.git
@@ -465,7 +466,8 @@ sudo mkdir -p \$FONTS_DIR
 for font in "${SELECTED_ARABIC_FONTS[@]}"; do
 	case \$font in
 		"SST Arabic") font_archive="SST-Arabic.zip";;
-		"18 Khebrat Musamim") font_archive="khebrat-musamim.zip";;
+		"RB") font_archive="RB.zip";;
+		"Khebrat Musamim") font_archive="khebrat-musamim.zip";;
 		"Amiri") font_archive="Amiri.zip";;
 		"Noto Naskh Arabic") font_archive="Noto-Naskh-Arabic.zip";;
 		"SF Arabic") font_archive"SF-Arabic.zip";;
