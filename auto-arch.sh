@@ -478,7 +478,7 @@ mv $HOME/dotfiles/wal $HOME/.config/
 FONTS_DIR="/usr/local/share/fonts"
 sudo mkdir -p $FONTS_DIR
 
-for font in "__SELECTED_ARABIC_FONTS__"; do
+for font in __SELECTED_ARABIC_FONTS__; do
 	case $font in
 		"SST Arabic") font_archive="SST-Arabic.zip";;
 		"RB") font_archive="RB.zip";;
