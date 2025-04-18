@@ -299,6 +299,7 @@ CUSTOM_PKGS=(
 	"fastfetch" # System info
 	"powertop" # Power consumption monitor
 	"btop" # System resources monitor
+	"firefox" # Web Browser
 )
 
 LSP_PKGS=(
@@ -377,7 +378,6 @@ arch-chroot /mnt /bin/bash installation.sh
 
 cat << EOF > /mnt/home/$USERNAME/customization.sh
 AUR_PKGS=(
-	"brave-bin" # Brave Browser
 	"vscode-langservers-extracted" # HTML/CSS/JSON/ESLint language servers extracted from vscode
 )
 
@@ -451,6 +451,18 @@ sudo mv \$HOME/dotfiles/zathura \$HOME/.config/
 # Configure ly
 sudo mv \$HOME/dotfiles/ly /etc/
 sudo systemctl enable ly.service
+
+# Configure Firefox
+firefox --headless --first-startup &
+FIREFOX_PID=$!
+
+while [ ! -d \$HOME/.mozilla/firefox/*.default* ]; do
+    sleep 1
+done
+
+PROFILE_DIR=$(ls -d \$HOME/.mozilla/firefox/*.default*)
+cp -r \$HOME/dotfiles/firefox/* $PROFILE_DIR
+kill $FIREFOX_PID
 
 # Wallpapers
 git clone https://github.com/oversys/wallpapers.git
