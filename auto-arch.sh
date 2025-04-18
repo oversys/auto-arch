@@ -376,107 +376,110 @@ arch-chroot /mnt /bin/bash installation.sh
 
 # ----------------------------- Customization ----------------------------- 
 
-cat << EOF > /mnt/home/$USERNAME/customization.sh
+cat << 'EOF' > /mnt/home/$USERNAME/customization.sh
 AUR_PKGS=(
 	"vscode-langservers-extracted" # HTML/CSS/JSON/ESLint language servers extracted from vscode
 )
 
 # Tool to switch between GPU modes on Optimus systems
-if [ "$GPU_BRAND" == "NVIDIA" ]; then AUR_PKGS+=("envycontrol"); fi
+if [ "__GPU_BRAND__" == "NVIDIA" ]; then AUR_PKGS+=("envycontrol"); fi
 
 # Automatic CPU speed & power optimizer for Linux
-if [ "$POWER_OPTIMIZER" == "YES" ]; then AUR_PKGS+=("auto-cpufreq"); fi
+if [ "__POWER_OPTIMIZER__" == "YES" ]; then AUR_PKGS+=("auto-cpufreq"); fi
 
 # Install AUR packages
-for aurpkg in "\${AUR_PKGS[@]}"; do
-	git clone https://aur.archlinux.org/\$aurpkg.git
-    sudo chmod 777 \$aurpkg
-	cd \$aurpkg
+for aurpkg in "${AUR_PKGS[@]}"; do
+	git clone https://aur.archlinux.org/$aurpkg.git
+    sudo chmod 777 $aurpkg
+	cd $aurpkg
 	makepkg -si --noconfirm
 	cd ..
-	sudo rm -rf \$aurpkg
+	sudo rm -rf $aurpkg
 done
 
 # Configure power management tools
-if [ "$POWER_OPTIMIZER" == "YES" ]; then sudo auto-cpufreq --install; fi
-if [ "$GPU_BRAND" == "NVIDIA" ]; then sudo envycontrol -s hybrid --rtd3 3; fi
+if [ "__POWER_OPTIMIZER__" == "YES" ]; then sudo auto-cpufreq --install; fi
+if [ "__GPU_BRAND__" == "NVIDIA" ]; then sudo envycontrol -s hybrid --rtd3 3; fi
 
 # Change default shell
-sudo chsh -s /bin/zsh \$USER
+sudo chsh -s /bin/zsh $USER
 
 # Make config folder and prayer time history folder
-mkdir -p \$HOME/.config
-mkdir \$HOME/.config/prayerhistory
+mkdir -p $HOME/.config
+mkdir $HOME/.config/prayerhistory
 
 # Download dotfiles
-cd \$HOME
+cd $HOME
 git clone https://github.com/oversys/dotfiles.git
 
 # Configure Hyprland
-mv \$HOME/dotfiles/hypr \$HOME/.config/
-for script in \$HOME/.config/hypr/scripts/*.sh; do sudo chmod 777 \$script; done
+mv $HOME/dotfiles/hypr $HOME/.config/
+for script in $HOME/.config/hypr/scripts/*.sh; do sudo chmod 777 $script; done
 
-if [ -n "$PRAYER_COUNTRY" ] && [ -n "$PRAYER_CITY" ]; then
-	sed -i "s/__COUNTRY__/$PRAYER_COUNTRY/" \$HOME/.config/hypr/scripts/prayer.sh
-	sed -i "s/__CITY__/$PRAYER_CITY/" \$HOME/.config/hypr/scripts/prayer.sh
-	sed -i "s/__METHOD__/${PRAYER_METHOD%% *}/" \$HOME/.config/hypr/scripts/prayer.sh
+if [ -n "__PRAYER_COUNTRY__" ] && [ -n "__PRAYER_CITY__" ]; then
+	sed -i "s/__COUNTRY__/__PRAYER_COUNTRY__/" $HOME/.config/hypr/scripts/prayer.sh
+	sed -i "s/__CITY__/__PRAYER_CITY__/" $HOME/.config/hypr/scripts/prayer.sh
+	sed -i "s/__METHOD__/__PRAYER_METHOD__/" $HOME/.config/hypr/scripts/prayer.sh
 fi
 
 # Configure Waybar
-mv \$HOME/dotfiles/waybar \$HOME/.config/
+mv $HOME/dotfiles/waybar $HOME/.config/
 
 # Configure kitty
-mv \$HOME/dotfiles/kitty \$HOME/.config/
+mv $HOME/dotfiles/kitty $HOME/.config/
 
 # Configure ZSH
-git clone https://github.com/zsh-users/zsh-autosuggestions.git \$HOME/.zsh/zsh-autosuggestions
-git clone https://github.com/zdharma-continuum/fast-syntax-highlighting \$HOME/.zsh/fast-syntax-highlighting
-mv \$HOME/dotfiles/.zshrc \$HOME/
+git clone https://github.com/zsh-users/zsh-autosuggestions.git $HOME/.zsh/zsh-autosuggestions
+git clone https://github.com/zdharma-continuum/fast-syntax-highlighting $HOME/.zsh/fast-syntax-highlighting
+mv $HOME/dotfiles/.zshrc $HOME/
 
 # Configure neovim
-mv \$HOME/dotfiles/nvim \$HOME/.config/
+mv $HOME/dotfiles/nvim $HOME/.config/
 
 # Configure dunst
-sudo mv \$HOME/dotfiles/dunst \$HOME/.config/
+mv $HOME/dotfiles/dunst $HOME/.config/
 
 # Configure rofi
-sudo mv \$HOME/dotfiles/rofi \$HOME/.config/
+mv $HOME/dotfiles/rofi $HOME/.config/
 
 # Configure fastfetch 
-sudo mv \$HOME/dotfiles/fastfetch \$HOME/.config/
+mv $HOME/dotfiles/fastfetch $HOME/.config/
 
 # Configure zathura
-sudo mv \$HOME/dotfiles/zathura \$HOME/.config/
+mv $HOME/dotfiles/zathura $HOME/.config/
 
 # Configure ly
-sudo mv \$HOME/dotfiles/ly /etc/
+sudo mv $HOME/dotfiles/ly /etc/
 sudo systemctl enable ly.service
 
 # Configure Firefox
 firefox --headless --first-startup &
 FIREFOX_PID=$!
 
-while [ ! -d \$HOME/.mozilla/firefox/*.default* ]; do
+MOZILLA_DIR="$HOME/.mozilla/firefox"
+PROFILE_PATTERN="*.default-release"
+
+while [ -z "$(find $MOZILLA_DIR -maxdepth 1 -type d -name $PROFILE_PATTERN 2>/dev/null)" ]; do
     sleep 1
 done
 
-PROFILE_DIR=$(ls -d \$HOME/.mozilla/firefox/*.default*)
-cp -r \$HOME/dotfiles/firefox/* $PROFILE_DIR
+PROFILE_DIR=$(ls -d $MOZILLA_DIR/*.default-release)
+mv $HOME/dotfiles/firefox/* $PROFILE_DIR
 kill $FIREFOX_PID
 
 # Wallpapers
 git clone https://github.com/oversys/wallpapers.git
-sudo mv \$HOME/wallpapers/wallpapers \$HOME/.config/
+mv $HOME/wallpapers/wallpapers $HOME/.config/
 
 # Pywal templates
-sudo mv \$HOME/dotfiles/wal \$HOME/.config/
+mv $HOME/dotfiles/wal $HOME/.config/
 
 # Install Arabic font(s)
 FONTS_DIR="/usr/local/share/fonts"
-sudo mkdir -p \$FONTS_DIR
+sudo mkdir -p $FONTS_DIR
 
-for font in "${SELECTED_ARABIC_FONTS[@]}"; do
-	case \$font in
+for font in "__SELECTED_ARABIC_FONTS__"; do
+	case $font in
 		"SST Arabic") font_archive="SST-Arabic.zip";;
 		"RB") font_archive="RB.zip";;
 		"18 Khebrat Musamim") font_archive="khebrat-musamim.zip";;
@@ -485,22 +488,22 @@ for font in "${SELECTED_ARABIC_FONTS[@]}"; do
 		"SF Arabic") font_archive"SF-Arabic.zip";;
 	esac
 
-	wget https://github.com/oversys/auto-arch/raw/main/resources/fonts/\$font_archive
-	sudo mv \$font_archive \$FONTS_DIR
-	sudo unzip \$FONTS_DIR/\$font_archive -d \$FONTS_DIR
-	sudo rm \$FONTS_DIR/\$font_archive
+	wget https://github.com/oversys/auto-arch/raw/main/resources/fonts/$font_archive
+	sudo mv $font_archive $FONTS_DIR
+	sudo unzip $FONTS_DIR/$font_archive -d $FONTS_DIR
+	sudo rm $FONTS_DIR/$font_archive
 done
 
-if [ "$DEFAULT_ARABIC_FONT" != "SST Arabic" ]; then
-	sed -i "s/SST Arabic/$DEFAULT_ARABIC_FONT/" \$HOME/dotfiles/fonts.conf
+if [ "__DEFAULT_ARABIC_FONT__" != "SST Arabic" ]; then
+	sed -i "s/SST Arabic/__DEFAULT_ARABIC_FONT__/" $HOME/dotfiles/fonts.conf
 fi
-sudo mv \$HOME/dotfiles/fonts.conf /etc/fonts/local.conf
+sudo mv $HOME/dotfiles/fonts.conf /etc/fonts/local.conf
 
 # Install English fonts
 wget https://github.com/oversys/auto-arch/raw/main/resources/fonts/Noto-English.zip
-sudo mv Noto-English.zip \$FONTS_DIR
-sudo unzip \$FONTS_DIR/Noto-English.zip -d \$FONTS_DIR
-sudo rm \$FONTS_DIR/Noto-English.zip
+sudo mv Noto-English.zip $FONTS_DIR
+sudo unzip $FONTS_DIR/Noto-English.zip -d $FONTS_DIR
+sudo rm $FONTS_DIR/Noto-English.zip
 
 # Install GRUB theme
 wget https://github.com/oversys/auto-arch/raw/main/resources/arch.tar
@@ -522,10 +525,12 @@ sudo mv macOSBigSur /usr/share/icons/
 
 sudo sed -i "s/Inherits=Adwaita/Inherits=macOSBigSur/g" /usr/share/icons/default/index.theme
 
-rm -rf \$HOME/dotfiles \$HOME/wallpapers \$0
+rm -rf $HOME/dotfiles $HOME/wallpapers $0
 
 exit
 EOF
+
+sed -i "s|__GPU_BRAND__|$GPU_BRAND|g; s|__POWER_OPTIMIZER__|$POWER_OPTIMIZER|g; s|__PRAYER_COUNTRY__|$PRAYER_COUNTRY|g; s|__PRAYER_CITY__|$PRAYER_CITY|g; s|__PRAYER_METHOD__|${PRAYER_METHOD%% *}|g; s|__SELECTED_ARABIC_FONTS__|${SELECTED_ARABIC_FONTS[@]}|g; s|__DEFAULT_ARABIC_FONT__|$DEFAULT_ARABIC_FONT|g;" /mnt/home/$USERNAME/customization.sh
 
 arch-chroot /mnt /bin/su -c "cd; bash customization.sh" $USERNAME -
 
