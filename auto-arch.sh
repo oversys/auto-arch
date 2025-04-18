@@ -530,7 +530,7 @@ rm -rf $HOME/dotfiles $HOME/wallpapers $0
 exit
 EOF
 
-sed -i "s|__GPU_BRAND__|$GPU_BRAND|g; s|__POWER_OPTIMIZER__|$POWER_OPTIMIZER|g; s|__PRAYER_COUNTRY__|$PRAYER_COUNTRY|g; s|__PRAYER_CITY__|$PRAYER_CITY|g; s|__PRAYER_METHOD__|${PRAYER_METHOD%% *}|g; s|__SELECTED_ARABIC_FONTS__|${SELECTED_ARABIC_FONTS[@]}|g; s|__DEFAULT_ARABIC_FONT__|$DEFAULT_ARABIC_FONT|g;" /mnt/home/$USERNAME/customization.sh
+sed -i "s|__GPU_BRAND__|$GPU_BRAND|g; s|__POWER_OPTIMIZER__|$POWER_OPTIMIZER|g; s|__PRAYER_COUNTRY__|$PRAYER_COUNTRY|g; s|__PRAYER_CITY__|$PRAYER_CITY|g; s|__PRAYER_METHOD__|${PRAYER_METHOD%% *}|g; s|__SELECTED_ARABIC_FONTS__|$(printf '"%s" ' "${SELECTED_ARABIC_FONTS[@]}")|g; s|__DEFAULT_ARABIC_FONT__|$DEFAULT_ARABIC_FONT|g;" /mnt/home/$USERNAME/customization.sh
 
 arch-chroot /mnt /bin/su -c "cd; bash customization.sh" $USERNAME -
 
