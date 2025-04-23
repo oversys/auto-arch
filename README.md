@@ -3,9 +3,19 @@
 ## Details
 * *Display Server Protocol:* `Wayland`
 * *Compositor:* `Hyprland`
+* *Wallpaper Utility:* `Hyprpaper`
+* *Screen locking Utility:* `Hyprlock`
 * *Status Bar:* `Waybar`
 * *Sound Server:* `PipeWire`
+* *Notification Daemon:* `dunst`
+* *TUI Display Manager:* `ly`
 * *Terminal Emulator:* `kitty`
+* *Shell:* `Zsh`
+* *Text Editor:* `neovim`
+* *PDF Viewer:* `zathura`
+* *System Information Tool:* `fastfetch`
+* *Application Launcher:* `Rofi`
+* *Web Browser:* `Firefox`
 
 ## Instructions
 > **After booting the install medium**

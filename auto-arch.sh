@@ -292,6 +292,7 @@ CUSTOM_PKGS=(
 	"rofi-wayland" # Wayland fork of rofi
 	"ly" # TUI Display Manager
 	"dunst" # Notifications
+	"libnotify" # Notifications
 	"kitty" # Terminal Emulator
 	"neovim" # Text Editor
 	"zathura-pdf-mupdf" # PDF Reader
@@ -299,6 +300,8 @@ CUSTOM_PKGS=(
 	"fastfetch" # System info
 	"powertop" # Power consumption monitor
 	"btop" # System resources monitor
+	"openssh" # Secure Shell
+	"rsync" # File transfer utility
 	"firefox" # Web Browser
 )
 
