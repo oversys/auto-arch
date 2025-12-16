@@ -92,7 +92,7 @@ esac
 if whiptail --title "$title" --yesno "Install auto-cpufreq?" 0 0; then POWER_OPTIMIZER="YES"; else POWER_OPTIMIZER="NO"; fi
 
 # Select default Arabic font
-ARABIC_FONTS=("SST Arabic" "RB" "Amiri" "Noto Naskh Arabic" "SF Arabic" "18 Khebrat Musamim" "Skip Arabic font installation")
+ARABIC_FONTS=("IBM Plex Sans Arabic" "RB" "SST Arabic" "Amiri" "Noto Naskh Arabic" "SF Arabic" "18 Khebrat Musamim" "Skip Arabic font installation")
 DEFAULT_ARABIC_FONT=$(select_from_menu "default Arabic font" 0 "${ARABIC_FONTS[@]}")
 if [ $? -ne 0 ]; then exit; fi
 
@@ -483,8 +483,9 @@ sudo mkdir -p $FONTS_DIR
 
 for font in __SELECTED_ARABIC_FONTS__; do
 	case $font in
-		"SST Arabic") font_archive="SST-Arabic.zip";;
+		"IBM Plex Sans Arabic") font_archive="IBM-Plex-Sans-Arabic.zip";;
 		"RB") font_archive="RB.zip";;
+		"SST Arabic") font_archive="SST-Arabic.zip";;
 		"18 Khebrat Musamim") font_archive="khebrat-musamim.zip";;
 		"Amiri") font_archive="Amiri.zip";;
 		"Noto Naskh Arabic") font_archive="Noto-Naskh-Arabic.zip";;
@@ -498,7 +499,7 @@ for font in __SELECTED_ARABIC_FONTS__; do
 done
 
 if [ "__DEFAULT_ARABIC_FONT__" != "SST Arabic" ]; then
-	sed -i "s/SST Arabic/__DEFAULT_ARABIC_FONT__/" $HOME/dotfiles/fonts.conf
+	sed -i "s/IBM Plex Sans Arabic/__DEFAULT_ARABIC_FONT__/" $HOME/dotfiles/fonts.conf
 fi
 sudo mv $HOME/dotfiles/fonts.conf /etc/fonts/local.conf
 
