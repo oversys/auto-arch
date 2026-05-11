@@ -295,6 +295,7 @@ CUSTOM_PKGS=(
 	"libnotify" # Notifications
 	"kitty" # Terminal Emulator
 	"neovim" # Text Editor
+	"tree-sitter-cli" # Syntax highlighting (for nvim-treesitter)
 	"zathura-pdf-mupdf" # PDF Reader
 	"github-cli" # Github CLI
 	"fastfetch" # System info
@@ -453,29 +454,31 @@ mv $HOME/dotfiles/zathura $HOME/.config/
 
 # Configure ly
 sudo mv $HOME/dotfiles/ly /etc/
-sudo systemctl enable ly.service
+sudo systemctl enable ly@tty1.service
 
 # Configure Firefox
-firefox --headless --first-startup &
+FIREFOX_DIR="$HOME/.config/mozilla/firefox"
+PROFILE_NAME="auto-arch"
+
+firefox --CreateProfile "$PROFILE_NAME"
+
+PROFILE_DIR=$(find "$FIREFOX_DIR" -maxdepth 1 -type d -name "*.$PROFILE_NAME" | head -n 1)
+
+mv $HOME/dotfiles/firefox/* $PROFILE_DIR
+
+firefox --headless -P "$PROFILE_NAME" &
 FIREFOX_PID=$!
 
-MOZILLA_DIR="$HOME/.mozilla/firefox"
-PROFILE_PATTERN="*.default-release"
-
-while [ -z "$(find $MOZILLA_DIR -maxdepth 1 -type d -name $PROFILE_PATTERN 2>/dev/null)" ]; do
-    sleep 1
+while [ ! -f "$PROFILE_DIR/prefs.js" ]; do
+	sleep 0.5
 done
 
-PROFILE_DIR=$(ls -d $MOZILLA_DIR/*.default-release)
-mv $HOME/dotfiles/firefox/* $PROFILE_DIR
 kill $FIREFOX_PID
+wait $FIREFOX_PID
 
 # Wallpapers
 git clone https://github.com/oversys/wallpapers.git
 mv $HOME/wallpapers/wallpapers $HOME/.config/
-
-# Pywal templates
-mv $HOME/dotfiles/wal $HOME/.config/
 
 # Install Arabic font(s)
 FONTS_DIR="/usr/local/share/fonts"
