@@ -100,9 +100,9 @@ if [ $? -ne 0 ]; then exit; fi
 if [ "$DEFAULT_ARABIC_FONT" != "Skip Arabic font installation" ]; then
 	CHECKLIST_ITEMS=()
 	for font in "${ARABIC_FONTS[@]}"; do
-	    if [ "$font" != "$DEFAULT_ARABIC_FONT" ] && [ "$font" != "Skip Arabic font installation" ]; then
-	        CHECKLIST_ITEMS+=("$font" "OFF")
-	    fi
+	if [ "$font" != "$DEFAULT_ARABIC_FONT" ] && [ "$font" != "Skip Arabic font installation" ]; then
+		CHECKLIST_ITEMS+=("$font" "OFF")
+	fi
 	done
 	
 	SELECTED_ARABIC_FONTS=$(whiptail --title "$title" --noitem --checklist "Select Arabic fonts" 0 0 0 "${CHECKLIST_ITEMS[@]}" 3>&1 1>&2 2>&3)
@@ -263,6 +263,7 @@ SYSTEM_PKGS=(
 	"zsh" # Z Shell
 	"cifs-utils" # Mount Common Internet File System
 	"ntfs-3g" # Mount New Technology File System
+	"rsync" # File transfer utility
 	"eza" # ls alternative
 	"bat" # cat alternative
 	"ripgrep" # grep alternative
@@ -273,6 +274,10 @@ SYSTEM_PKGS=(
 	"unzip" # Unzip files
 	"jq" # JSON Processor
 	"bc" # Basic Calculator
+	"powertop" # Power consumption monitor
+	"btop" # System resources monitor
+	"openssh" # Secure Shell
+	"fastfetch" # System info
 )
 
 PYTHON_PKGS=(
@@ -281,28 +286,47 @@ PYTHON_PKGS=(
 	"python-pywal" # Pywal
 )
 
-CUSTOM_PKGS=(
+# Packages for the Hyprland setup
+HYPRLAND_PKGS=(
 	"hyprland" # Wayland compositor
 	"waybar" # Wayland status bar
 	"hyprpaper" # Wayland wallpaper tool
 	"hyprlock" # Wayland locking utility
+	"rofi" # Application search
+	"dunst" # Notifications
+	"libnotify" # Notifications
+)
+
+# Packages for the (currently nonexistent) DWL setup
+# May contain duplicate packages from Hyprland setup to keep setups somewhat independent
+DWL_PKGS=(
+	"wayland" # Core Wayland protocol libraries
+	"wayland-protocols" # Extra Wayland protocol definitions
+	"xorg-xwayland" # Compatibility layer for X11 applications
+	"wlroots0.20" # Modular Wayland compositor library used by DWL
+	"pkgconf" # DWL compile-time dependency
+	"libinput" # Input device handling library
+	"libxcb" # X11 client-side library
+	"libxkbcommon" # Keymap handling library
+
+	"waybar" # Wayland status bar
+	"hyprpaper" # Wayland wallpaper tool
+	"hyprlock" # Wayland locking utility
+	"rofi" # Application search
+	"dunst" # Notifications
+	"libnotify" # Notifications
+)
+
+CUSTOM_PKGS=(
 	"grim" # Wayland screenshot tool
 	"slurp" # Wayland region selector
 	"wl-clipboard" # Wayland clipboard utilities
-	"rofi-wayland" # Wayland fork of rofi
 	"ly" # TUI Display Manager
-	"dunst" # Notifications
-	"libnotify" # Notifications
 	"kitty" # Terminal Emulator
 	"neovim" # Text Editor
 	"tree-sitter-cli" # Syntax highlighting (for nvim-treesitter)
 	"zathura-pdf-mupdf" # PDF Reader
 	"github-cli" # Github CLI
-	"fastfetch" # System info
-	"powertop" # Power consumption monitor
-	"btop" # System resources monitor
-	"openssh" # Secure Shell
-	"rsync" # File transfer utility
 	"firefox" # Web Browser
 )
 
@@ -316,7 +340,7 @@ LSP_PKGS=(
 	"lua-language-server" # Lua Language Server
 )
 
-PKGS=(${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${FONT_PKGS[@]} ${SYSTEM_PKGS[@]} ${PYTHON_PKGS[@]} ${CUSTOM_PKGS[@]} ${LSP_PKGS[@]} $MICROCODE_PKG)
+PKGS=(${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${FONT_PKGS[@]} ${SYSTEM_PKGS[@]} ${PYTHON_PKGS[@]} ${HYPRLAND_PKGS[@]} ${CUSTOM_PKGS[@]} ${LSP_PKGS[@]} $MICROCODE_PKG)
 
 until pacstrap /mnt "${PKGS[@]}"; do
 	echo -e "\e[4;95mRetry?\e[0m"
@@ -394,7 +418,7 @@ if [ "__POWER_OPTIMIZER__" == "YES" ]; then AUR_PKGS+=("auto-cpufreq"); fi
 # Install AUR packages
 for aurpkg in "${AUR_PKGS[@]}"; do
 	git clone https://aur.archlinux.org/$aurpkg.git
-    sudo chmod 777 $aurpkg
+	sudo chmod 777 $aurpkg
 	cd $aurpkg
 	makepkg -si --noconfirm
 	cd ..
