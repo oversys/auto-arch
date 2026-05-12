@@ -100,9 +100,9 @@ if [ $? -ne 0 ]; then exit; fi
 if [ "$DEFAULT_ARABIC_FONT" != "Skip Arabic font installation" ]; then
 	CHECKLIST_ITEMS=()
 	for font in "${ARABIC_FONTS[@]}"; do
-	if [ "$font" != "$DEFAULT_ARABIC_FONT" ] && [ "$font" != "Skip Arabic font installation" ]; then
-		CHECKLIST_ITEMS+=("$font" "OFF")
-	fi
+		if [ "$font" != "$DEFAULT_ARABIC_FONT" ] && [ "$font" != "Skip Arabic font installation" ]; then
+			CHECKLIST_ITEMS+=("$font" "OFF")
+		fi
 	done
 	
 	SELECTED_ARABIC_FONTS=$(whiptail --title "$title" --noitem --checklist "Select Arabic fonts" 0 0 0 "${CHECKLIST_ITEMS[@]}" 3>&1 1>&2 2>&3)
@@ -490,15 +490,15 @@ PROFILE_DIR=$(find "$FIREFOX_DIR" -maxdepth 1 -type d -name "*.$PROFILE_NAME" | 
 
 mv $HOME/dotfiles/firefox/* $PROFILE_DIR
 
-firefox --headless -P "$PROFILE_NAME" &
-FIREFOX_PID=$!
+# firefox --headless -P "$PROFILE_NAME" &
+# FIREFOX_PID=$!
 
-while [ ! -f "$PROFILE_DIR/prefs.js" ]; do
-	sleep 0.5
-done
+# while [ ! -f "$PROFILE_DIR/prefs.js" ]; do
+# 	sleep 0.5
+# done
 
-kill $FIREFOX_PID
-wait $FIREFOX_PID
+# kill $FIREFOX_PID
+# wait $FIREFOX_PID
 
 # Wallpapers
 git clone https://github.com/oversys/wallpapers.git
