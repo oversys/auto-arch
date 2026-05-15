@@ -444,6 +444,7 @@ git clone https://github.com/oversys/dotfiles.git
 mv $HOME/dotfiles/hypr $HOME/.config/
 
 # Configure scripts
+mv $HOME/dotfiles/scripts $HOME/.config/
 for script in $HOME/.config/scripts/*.sh; do sudo chmod 777 $script; done
 
 if [ -n "__PRAYER_COUNTRY__" ] && [ -n "__PRAYER_CITY__" ]; then
@@ -486,7 +487,7 @@ sudo systemctl enable ly@tty1.service
 FIREFOX_DIR="$HOME/.config/mozilla/firefox"
 PROFILE_NAME="auto-arch"
 
-firefox --CreateProfile "$PROFILE_NAME"
+firefox --headless --CreateProfile "$PROFILE_NAME"
 
 PROFILE_DIR=$(find "$FIREFOX_DIR" -maxdepth 1 -type d -name "*.$PROFILE_NAME" | head -n 1)
 
