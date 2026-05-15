@@ -264,9 +264,6 @@ SYSTEM_PKGS=(
 	"cifs-utils" # Mount Common Internet File System
 	"ntfs-3g" # Mount New Technology File System
 	"rsync" # File transfer utility
-	"eza" # ls alternative
-	"bat" # cat alternative
-	"ripgrep" # grep alternative
 	"wget" # Retrieve content
 	"git" # Git
 	"man" # Manual
@@ -274,10 +271,7 @@ SYSTEM_PKGS=(
 	"unzip" # Unzip files
 	"jq" # JSON Processor
 	"bc" # Basic Calculator
-	"powertop" # Power consumption monitor
-	"btop" # System resources monitor
 	"openssh" # Secure Shell
-	"fastfetch" # System info
 )
 
 PYTHON_PKGS=(
@@ -310,7 +304,7 @@ DWL_PKGS=(
 	"libxkbcommon" # Keymap handling library
 
 	"waybar" # Wayland status bar
-	"hyprpaper" # Wayland wallpaper tool
+	"swaybg" # Wayland wallpaper tool
 	"hyprlock" # Wayland locking utility
 	"rofi" # Application search
 	"dunst" # Notifications
@@ -318,10 +312,16 @@ DWL_PKGS=(
 )
 
 CUSTOM_PKGS=(
+	"eza" # ls alternative
+	"bat" # cat alternative
+	"ripgrep" # grep alternative
 	"grim" # Wayland screenshot tool
 	"slurp" # Wayland region selector
 	"wl-clipboard" # Wayland clipboard utilities
 	"ly" # TUI Display Manager
+	"powertop" # Power consumption monitor
+	"btop" # System resources monitor
+	"fastfetch" # System info
 	"kitty" # Terminal Emulator
 	"neovim" # Text Editor
 	"tree-sitter-cli" # Syntax highlighting (for nvim-treesitter)
@@ -409,7 +409,7 @@ AUR_PKGS=(
 	"vscode-langservers-extracted" # HTML/CSS/JSON/ESLint language servers extracted from vscode
 )
 
-# Tool to switch between GPU modes on Optimus systems
+# Tool to switch between GPU modes on Optimus systems (archived on 3 May 2026)
 if [ "__GPU_BRAND__" == "NVIDIA" ]; then AUR_PKGS+=("envycontrol"); fi
 
 # Automatic CPU speed & power optimizer for Linux
@@ -426,8 +426,8 @@ for aurpkg in "${AUR_PKGS[@]}"; do
 done
 
 # Configure power management tools
-if [ "__POWER_OPTIMIZER__" == "YES" ]; then sudo auto-cpufreq --install; fi
 if [ "__GPU_BRAND__" == "NVIDIA" ]; then sudo envycontrol -s hybrid --rtd3 3; fi
+if [ "__POWER_OPTIMIZER__" == "YES" ]; then sudo auto-cpufreq --install; fi
 
 # Change default shell
 sudo chsh -s /bin/zsh $USER
@@ -442,12 +442,14 @@ git clone https://github.com/oversys/dotfiles.git
 
 # Configure Hyprland
 mv $HOME/dotfiles/hypr $HOME/.config/
-for script in $HOME/.config/hypr/scripts/*.sh; do sudo chmod 777 $script; done
+
+# Configure scripts
+for script in $HOME/.config/scripts/*.sh; do sudo chmod 777 $script; done
 
 if [ -n "__PRAYER_COUNTRY__" ] && [ -n "__PRAYER_CITY__" ]; then
-	sed -i "s/__COUNTRY__/__PRAYER_COUNTRY__/" $HOME/.config/hypr/scripts/prayer.sh
-	sed -i "s/__CITY__/__PRAYER_CITY__/" $HOME/.config/hypr/scripts/prayer.sh
-	sed -i "s/__METHOD__/__PRAYER_METHOD__/" $HOME/.config/hypr/scripts/prayer.sh
+	sed -i "s/__COUNTRY__/__PRAYER_COUNTRY__/" $HOME/.config/scripts/prayer.sh
+	sed -i "s/__CITY__/__PRAYER_CITY__/" $HOME/.config/scripts/prayer.sh
+	sed -i "s/__METHOD__/__PRAYER_METHOD__/" $HOME/.config/scripts/prayer.sh
 fi
 
 # Configure Waybar
@@ -569,3 +571,4 @@ arch-chroot /mnt /bin/su -c "cd; bash customization.sh" $USERNAME -
 # ----------------------------- Complete ----------------------------- 
 
 msgbox "Arch Linux has been installed successfully on this machine."
+
