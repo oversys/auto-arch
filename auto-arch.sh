@@ -91,6 +91,41 @@ esac
 # Install power optimizer
 if whiptail --title "$title" --yesno "Install auto-cpufreq?" 0 0; then POWER_OPTIMIZER="YES"; else POWER_OPTIMIZER="NO"; fi
 
+# Select Wayland compositor
+COMPOSITORS=("dwl" "Hyprland")
+SELECTED_COMPOSITOR=$(select_from_menu "Wayland compositor" 0 "${COMPOSITORS[@]}")
+if [ $? -ne 0 ]; then exit; fi
+
+if [ "$SELECTED_COMPOSITOR" == "dwl" ]; then
+	COMPOSITOR_PKGS=(
+		"wayland" # Core Wayland protocol libraries
+		"wayland-protocols" # Extra Wayland protocol definitions
+		"xorg-xwayland" # Compatibility layer for X11 applications
+		"wlroots0.20" # Modular Wayland compositor library used by DWL
+		"pkgconf" # DWL compile-time dependency
+		"libinput" # Input device handling library
+		"libxcb" # X11 client-side library
+		"libxkbcommon" # Keymap handling library
+
+		"waybar" # Wayland status bar
+		"swaybg" # Wayland wallpaper tool
+		"hyprlock" # Wayland locking utility
+		"rofi" # Application search
+		"dunst" # Notifications
+		"libnotify" # Notifications
+	)
+elif [ "$SELECTED_COMPOSITOR" == "Hyprland" ]; then
+	COMPOSITOR_PKGS=(
+		"hyprland" # Wayland compositor
+		"waybar" # Wayland status bar
+		"hyprpaper" # Wayland wallpaper tool
+		"hyprlock" # Wayland locking utility
+		"rofi" # Application search
+		"dunst" # Notifications
+		"libnotify" # Notifications
+	)
+fi
+
 # Select default Arabic font
 ARABIC_FONTS=("YouTube Sans Arabic" "IBM Plex Sans Arabic" "RB" "SST Arabic" "Amiri" "Noto Naskh Arabic" "SF Arabic" "18 Khebrat Musamim" "Skip Arabic font installation")
 DEFAULT_ARABIC_FONT=$(select_from_menu "default Arabic font" 0 "${ARABIC_FONTS[@]}")
@@ -190,6 +225,7 @@ CITY (TIMEZONE): $SELECTED_CITY
 CPU BRAND: $CPU_BRAND
 GPU BRAND: $GPU_BRAND
 INSTALL POWER OPTIMIZER (auto-cpufreq)?: $POWER_OPTIMIZER
+WAYLAND COMPOSITOR: $SELECTED_COMPOSITOR
 DEFAULT ARABIC FONT: $DEFAULT_ARABIC_FONT
 SELECTED ARABIC FONTS: ${JOINED_ARABIC_FONTS%, }
 COUNTRY (PRAYER): $PRAYER_COUNTRY
@@ -280,37 +316,6 @@ PYTHON_PKGS=(
 	"python-pywal" # Pywal
 )
 
-# Packages for the Hyprland setup
-HYPRLAND_PKGS=(
-	"hyprland" # Wayland compositor
-	"waybar" # Wayland status bar
-	"hyprpaper" # Wayland wallpaper tool
-	"hyprlock" # Wayland locking utility
-	"rofi" # Application search
-	"dunst" # Notifications
-	"libnotify" # Notifications
-)
-
-# Packages for the (currently nonexistent) DWL setup
-# May contain duplicate packages from Hyprland setup to keep setups somewhat independent
-DWL_PKGS=(
-	"wayland" # Core Wayland protocol libraries
-	"wayland-protocols" # Extra Wayland protocol definitions
-	"xorg-xwayland" # Compatibility layer for X11 applications
-	"wlroots0.20" # Modular Wayland compositor library used by DWL
-	"pkgconf" # DWL compile-time dependency
-	"libinput" # Input device handling library
-	"libxcb" # X11 client-side library
-	"libxkbcommon" # Keymap handling library
-
-	"waybar" # Wayland status bar
-	"swaybg" # Wayland wallpaper tool
-	"hyprlock" # Wayland locking utility
-	"rofi" # Application search
-	"dunst" # Notifications
-	"libnotify" # Notifications
-)
-
 CUSTOM_PKGS=(
 	"eza" # ls alternative
 	"bat" # cat alternative
@@ -340,7 +345,7 @@ LSP_PKGS=(
 	"lua-language-server" # Lua Language Server
 )
 
-PKGS=(${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${FONT_PKGS[@]} ${SYSTEM_PKGS[@]} ${PYTHON_PKGS[@]} ${HYPRLAND_PKGS[@]} ${CUSTOM_PKGS[@]} ${LSP_PKGS[@]} $MICROCODE_PKG)
+PKGS=(${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${FONT_PKGS[@]} ${SYSTEM_PKGS[@]} ${PYTHON_PKGS[@]} ${COMPOSITOR_PKGS[@]} ${CUSTOM_PKGS[@]} ${LSP_PKGS[@]} $MICROCODE_PKG)
 
 until pacstrap /mnt "${PKGS[@]}"; do
 	echo -e "\e[4;95mRetry?\e[0m"
@@ -440,8 +445,15 @@ mkdir $HOME/.config/prayerhistory
 cd $HOME
 git clone https://github.com/oversys/dotfiles.git
 
-# Configure Hyprland
-mv $HOME/dotfiles/hypr $HOME/.config/
+# Configure Wayland compositor
+if [ "__SELECTED_COMPOSITOR__" == "dwl" ]; then
+	git clone https://github.com/oversys/dwl.git $HOME/.config/dwl
+	cd $HOME/.config/dwl
+	sudo make clean install
+	cd $HOME
+elif [ "__SELECTED_COMPOSITOR__" == "Hyprland" ]; then
+	mv $HOME/dotfiles/hypr $HOME/.config/
+fi
 
 # Configure scripts
 mv $HOME/dotfiles/scripts $HOME/.config/
@@ -565,7 +577,7 @@ rm -rf $HOME/dotfiles $HOME/wallpapers $0
 exit
 EOF
 
-sed -i "s|__GPU_BRAND__|$GPU_BRAND|g; s|__POWER_OPTIMIZER__|$POWER_OPTIMIZER|g; s|__PRAYER_COUNTRY__|$PRAYER_COUNTRY|g; s|__PRAYER_CITY__|$PRAYER_CITY|g; s|__PRAYER_METHOD__|${PRAYER_METHOD%% *}|g; s|__SELECTED_ARABIC_FONTS__|$(printf '"%s" ' "${SELECTED_ARABIC_FONTS[@]}")|g; s|__DEFAULT_ARABIC_FONT__|$DEFAULT_ARABIC_FONT|g;" /mnt/home/$USERNAME/customization.sh
+sed -i "s|__GPU_BRAND__|$GPU_BRAND|g; s|__POWER_OPTIMIZER__|$POWER_OPTIMIZER|g; s|__SELECTED_COMPOSITOR__|$SELECTED_COMPOSITOR|g; s|__PRAYER_COUNTRY__|$PRAYER_COUNTRY|g; s|__PRAYER_CITY__|$PRAYER_CITY|g; s|__PRAYER_METHOD__|${PRAYER_METHOD%% *}|g; s|__SELECTED_ARABIC_FONTS__|$(printf '"%s" ' "${SELECTED_ARABIC_FONTS[@]}")|g; s|__DEFAULT_ARABIC_FONT__|$DEFAULT_ARABIC_FONT|g;" /mnt/home/$USERNAME/customization.sh
 
 arch-chroot /mnt /bin/su -c "cd; bash customization.sh" $USERNAME -
 
