@@ -447,6 +447,7 @@ git clone https://github.com/oversys/dotfiles.git
 
 # Configure Wayland compositor
 if [ "__SELECTED_COMPOSITOR__" == "dwl" ]; then
+	sudo mkdir -p /usr/share/wayland-sessions
 	git clone https://github.com/oversys/dwl.git $HOME/.config/dwl
 	cd $HOME/.config/dwl
 	sudo make clean install
