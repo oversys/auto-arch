@@ -109,7 +109,7 @@ if [ "$SELECTED_COMPOSITOR" == "dwl" ]; then
 
 		"waybar" # Wayland status bar
 		"swaybg" # Wayland wallpaper tool
-		"hyprlock" # Wayland locking utility
+		"gtklock" # Wayland locking utility
 		"rofi" # Application search
 		"dunst" # Notifications
 		"libnotify" # Notifications
@@ -447,11 +447,17 @@ git clone https://github.com/oversys/dotfiles.git
 
 # Configure Wayland compositor
 if [ "__SELECTED_COMPOSITOR__" == "dwl" ]; then
+	# Ensure directory exists so dwl can copy .desktop file (for ly display manager)
 	sudo mkdir -p /usr/share/wayland-sessions
+
+	# Clone and compile dwl
 	git clone https://github.com/oversys/dwl.git $HOME/.config/dwl
 	cd $HOME/.config/dwl
 	sudo make clean install
 	cd $HOME
+
+	# Configure gtklock
+	mv $HOME/dotfiles/gtklock $HOME/.config/
 elif [ "__SELECTED_COMPOSITOR__" == "Hyprland" ]; then
 	mv $HOME/dotfiles/hypr $HOME/.config/
 fi

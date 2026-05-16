@@ -11,9 +11,9 @@
 
 ## Details
 * *Display Server Protocol:* `Wayland`
-* *Compositor:* `Hyprland`
-* *Wallpaper Utility:* `Hyprpaper`
-* *Screen locking Utility:* `Hyprlock`
+* *Compositor:* `dwl` or `Hyprland`
+* *Wallpaper Utility:* `swaybg` or `Hyprpaper`
+* *Screen locking Utility:* `gtklock` or `Hyprlock`
 * *Status Bar:* `Waybar`
 * *Sound Server:* `PipeWire`
 * *Notification Daemon:* `dunst`
