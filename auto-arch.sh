@@ -538,7 +538,7 @@ for font in __SELECTED_ARABIC_FONTS__; do
 
 	wget https://github.com/oversys/auto-arch/raw/main/resources/fonts/$font_archive
 	sudo mv $font_archive $FONTS_DIR
-	sudo unzip $FONTS_DIR/$font_archive -d $FONTS_DIR
+	sudo unzip -o $FONTS_DIR/$font_archive -d $FONTS_DIR
 	sudo rm $FONTS_DIR/$font_archive
 done
 
