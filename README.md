@@ -18,7 +18,7 @@
 * *Sound Server:* `PipeWire`
 * *Notification Daemon:* `dunst`
 * *TUI Display Manager:* `ly`
-* *Terminal Emulator:* `kitty`
+* *Terminal Emulator:* `foot` or `kitty`
 * *Shell:* `Zsh`
 * *Text Editor:* `neovim`
 * *PDF Viewer:* `zathura`

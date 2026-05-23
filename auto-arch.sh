@@ -110,6 +110,7 @@ if [ "$SELECTED_COMPOSITOR" == "dwl" ]; then
 		"waybar" # Wayland status bar
 		"swaybg" # Wayland wallpaper tool
 		"gtklock" # Wayland locking utility
+		"foot" # Terminal Emulator
 		"rofi" # Application search
 		"dunst" # Notifications
 		"libnotify" # Notifications
@@ -120,6 +121,7 @@ elif [ "$SELECTED_COMPOSITOR" == "Hyprland" ]; then
 		"waybar" # Wayland status bar
 		"hyprpaper" # Wayland wallpaper tool
 		"hyprlock" # Wayland locking utility
+		"kitty" # Terminal Emulator
 		"rofi" # Application search
 		"dunst" # Notifications
 		"libnotify" # Notifications
@@ -327,7 +329,6 @@ CUSTOM_PKGS=(
 	"powertop" # Power consumption monitor
 	"btop" # System resources monitor
 	"fastfetch" # System info
-	"kitty" # Terminal Emulator
 	"neovim" # Text Editor
 	"tree-sitter-cli" # Syntax highlighting (for nvim-treesitter)
 	"zathura-pdf-mupdf" # PDF Reader
@@ -458,8 +459,15 @@ if [ "__SELECTED_COMPOSITOR__" == "dwl" ]; then
 
 	# Configure gtklock
 	mv $HOME/dotfiles/gtklock $HOME/.config/
+
+	# Configure foot
+	mv $HOME/dotfiles/foot $HOME/.config/
 elif [ "__SELECTED_COMPOSITOR__" == "Hyprland" ]; then
+	# Configure Hyprland
 	mv $HOME/dotfiles/hypr $HOME/.config/
+
+	# Configure kitty
+	mv $HOME/dotfiles/kitty $HOME/.config/
 fi
 
 # Configure scripts
@@ -474,9 +482,6 @@ fi
 
 # Configure Waybar
 mv $HOME/dotfiles/waybar $HOME/.config/
-
-# Configure kitty
-mv $HOME/dotfiles/kitty $HOME/.config/
 
 # Configure ZSH
 git clone https://github.com/zsh-users/zsh-autosuggestions.git $HOME/.zsh/zsh-autosuggestions
