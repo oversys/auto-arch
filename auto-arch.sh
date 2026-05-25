@@ -421,6 +421,9 @@ if [ "__GPU_BRAND__" == "NVIDIA" ]; then AUR_PKGS+=("envycontrol"); fi
 # Automatic CPU speed & power optimizer for Linux
 if [ "__POWER_OPTIMIZER__" == "YES" ]; then AUR_PKGS+=("auto-cpufreq"); fi
 
+# Disable option to speed up installs from AUR
+sudo sed -i "s/OPTIONS=(strip/OPTIONS=(\!strip/g" /etc/makepkg.conf
+
 # Install AUR packages
 for aurpkg in "${AUR_PKGS[@]}"; do
 	git clone https://aur.archlinux.org/$aurpkg.git
@@ -504,7 +507,7 @@ mv $HOME/dotfiles/fastfetch $HOME/.config/
 mv $HOME/dotfiles/zathura $HOME/.config/
 
 # Configure ly
-sudo mv $HOME/dotfiles/ly /etc/
+sudo mv $HOME/dotfiles/ly/config.ini /etc/ly/
 sudo systemctl enable ly@tty1.service
 
 # Configure Firefox
