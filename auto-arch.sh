@@ -567,6 +567,10 @@ sudo mv Noto-English.zip $FONTS_DIR
 sudo unzip $FONTS_DIR/Noto-English.zip -d $FONTS_DIR
 sudo rm $FONTS_DIR/Noto-English.zip
 
+# Install custom glyph (flipped star crescent) for Waybar
+wget https://github.com/oversys/auto-arch/raw/main/resources/fonts/flipped_star_crescent.ttf
+sudo mv flipped_star_crescent.ttf $FONTS_DIR
+
 # Install GRUB theme
 wget https://github.com/oversys/auto-arch/raw/main/resources/arch.tar
 sudo mkdir -p /boot/grub/themes
