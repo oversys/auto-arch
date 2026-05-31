@@ -518,17 +518,12 @@ firefox --headless --CreateProfile "$PROFILE_NAME"
 
 PROFILE_DIR=$(find "$FIREFOX_DIR" -maxdepth 1 -type d -name "*.$PROFILE_NAME" | head -n 1)
 
+sudo mv $HOME/dotfiles/firefox/autoconfig/theme-reload-prefs.js /usr/lib/firefox/defaults/pref/
+sudo mv $HOME/dotfiles/firefox/autoconfig/theme-reload.js /usr/lib/firefox/
+
+rmdir $HOME/dotfiles/firefox/autoconfig
+
 mv $HOME/dotfiles/firefox/* $PROFILE_DIR
-
-# firefox --headless -P "$PROFILE_NAME" &
-# FIREFOX_PID=$!
-
-# while [ ! -f "$PROFILE_DIR/prefs.js" ]; do
-# 	sleep 0.5
-# done
-
-# kill $FIREFOX_PID
-# wait $FIREFOX_PID
 
 # Wallpapers
 git clone https://github.com/oversys/wallpapers.git
