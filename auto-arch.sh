@@ -518,8 +518,8 @@ firefox --headless --CreateProfile "$PROFILE_NAME"
 
 PROFILE_DIR=$(find "$FIREFOX_DIR" -maxdepth 1 -type d -name "*.$PROFILE_NAME" | head -n 1)
 
-sudo mv $HOME/dotfiles/firefox/autoconfig/theme-reload-prefs.js /usr/lib/firefox/defaults/pref/
-sudo mv $HOME/dotfiles/firefox/autoconfig/theme-reload.js /usr/lib/firefox/
+sudo mv $HOME/dotfiles/firefox/autoconfig/load-scripts-prefs.js /usr/lib/firefox/defaults/pref/
+sudo mv $HOME/dotfiles/firefox/autoconfig/load-scripts.js /usr/lib/firefox/
 
 rmdir $HOME/dotfiles/firefox/autoconfig
 
