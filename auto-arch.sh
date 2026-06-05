@@ -322,6 +322,7 @@ CUSTOM_PKGS=(
 	"eza" # ls alternative
 	"bat" # cat alternative
 	"ripgrep" # grep alternative
+	"fzf" # Fuzzy finder
 	"grim" # Wayland screenshot tool
 	"slurp" # Wayland region selector
 	"wl-clipboard" # Wayland clipboard utilities
