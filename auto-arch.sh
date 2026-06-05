@@ -325,25 +325,28 @@ CUSTOM_PKGS=(
 	"grim" # Wayland screenshot tool
 	"slurp" # Wayland region selector
 	"wl-clipboard" # Wayland clipboard utilities
-	"ly" # TUI Display Manager
+	"ly" # TUI display manager
 	"powertop" # Power consumption monitor
 	"btop" # System resources monitor
 	"fastfetch" # System info
-	"neovim" # Text Editor
+	"neovim" # Text editor
 	"tree-sitter-cli" # Syntax highlighting (for nvim-treesitter)
-	"zathura-pdf-mupdf" # PDF Reader
+	"zathura-pdf-mupdf" # PDF reader
 	"github-cli" # Github CLI
-	"firefox" # Web Browser
+	"firefox" # Web browser
+	"nodejs" # Node.js
+	"npm" # npm
 )
 
 LSP_PKGS=(
-	"nodejs" # TSServer dependency
-	"npm" # TSServer dependency
-	"typescript-language-server" # TS/JS Server
-	"rust-analyzer" # Rust Language Server
-	"clang" # C-Family Language Server
-	"pyright" # Python Language Server
-	"lua-language-server" # Lua Language Server
+	"clang" # C-Family language server (LLVM)
+	"pyright" # Python language server
+	"rust-analyzer" # Rust language server
+	"typescript-language-server" # TS/JS language server
+	"vscode-html-languageserver" # HTML language server
+	"vscode-css-languageserver" # CSS language server
+	"lua-language-server" # Lua language server
+	"bash-language-server" # Bash language server
 )
 
 PKGS=(${BASE_PKGS[@]} ${BOOT_PKGS[@]} ${NETWORK_PKGS[@]} ${BLUETOOTH_PKGS[@]} ${AUDIO_PKGS[@]} ${GPU_PKGS[@]} ${FONT_PKGS[@]} ${SYSTEM_PKGS[@]} ${PYTHON_PKGS[@]} ${COMPOSITOR_PKGS[@]} ${CUSTOM_PKGS[@]} ${LSP_PKGS[@]} $MICROCODE_PKG)
@@ -412,7 +415,7 @@ arch-chroot /mnt /bin/bash installation.sh
 
 cat << 'EOF' > /mnt/home/$USERNAME/customization.sh
 AUR_PKGS=(
-	"vscode-langservers-extracted" # HTML/CSS/JSON/ESLint language servers extracted from vscode
+	# Add AUR packages here
 )
 
 # Tool to switch between GPU modes on Optimus systems (archived on 3 May 2026)
@@ -420,9 +423,6 @@ if [ "__GPU_BRAND__" == "NVIDIA" ]; then AUR_PKGS+=("envycontrol"); fi
 
 # Automatic CPU speed & power optimizer for Linux
 if [ "__POWER_OPTIMIZER__" == "YES" ]; then AUR_PKGS+=("auto-cpufreq"); fi
-
-# Disable option to speed up installs from AUR
-sudo sed -i "s/OPTIONS=(strip/OPTIONS=(\!strip/g" /etc/makepkg.conf
 
 # Install AUR packages
 for aurpkg in "${AUR_PKGS[@]}"; do
@@ -491,16 +491,17 @@ git clone https://github.com/zsh-users/zsh-autosuggestions.git $HOME/.zsh/zsh-au
 git clone https://github.com/zdharma-continuum/fast-syntax-highlighting $HOME/.zsh/fast-syntax-highlighting
 mv $HOME/dotfiles/.zshrc $HOME/
 
-# Configure neovim
+# Configure Neovim
 mv $HOME/dotfiles/nvim $HOME/.config/
+nvim --headless -c "qa"
 
 # Configure dunst
 mv $HOME/dotfiles/dunst $HOME/.config/
 
-# Configure rofi
+# Configure Rofi
 mv $HOME/dotfiles/rofi $HOME/.config/
 
-# Configure fastfetch 
+# Configure Fastfetch
 mv $HOME/dotfiles/fastfetch $HOME/.config/
 
 # Configure zathura
@@ -526,7 +527,7 @@ rmdir $HOME/dotfiles/firefox/autoconfig
 mv $HOME/dotfiles/firefox/* $PROFILE_DIR
 
 # Wallpapers
-git clone https://github.com/oversys/wallpapers.git
+git clone --depth 1 https://github.com/oversys/wallpapers.git
 mv $HOME/wallpapers/wallpapers $HOME/.config/
 
 # Install Arabic font(s)
