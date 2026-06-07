@@ -18,7 +18,35 @@ password_box() {
 }
 
 msgbox() {
-	whiptail --title "$title" --msgbox "$1" 0 0
+	local MSG="$1"
+	local MSG_LEN=${#MSG}
+
+	# Get terminal size
+	local TERM_LINES=$(tput lines)
+	local TERM_COLS=$(tput cols)
+
+	local WIDTH=$(( TERM_COLS - 8 ))
+
+	local MAX_WIDTH=80
+	if [ $WIDTH -gt $MAX_WIDTH ]; then
+		WIDTH=$MAX_WIDTH
+	fi
+
+	# Prevent message box from being too wide
+	if [ $WIDTH -gt $(( MSG_LEN + 10 )) ]; then
+		WIDTH=$(( MSG_LEN + 10 ))
+	fi
+
+	local TEXT_WIDTH=$(( WIDTH - 4 ))
+	local TEXT_LINES=$(( (MSG_LEN + TEXT_WIDTH - 1) / TEXT_WIDTH ))
+
+	local HEIGHT=$(( TEXT_LINES + 7 ))
+
+	if [ $HEIGHT -gt $(( TERM_LINES - 2 )) ]; then
+		HEIGHT=$(( TERM_LINES - 2 ))
+	fi
+
+	whiptail --title "$title" --msgbox "$MSG" $HEIGHT $WIDTH
 }
 
 select_partition() {
@@ -33,20 +61,43 @@ select_partition() {
 }
 
 select_from_menu() {
-	TOSELECT=$1
+	local TOSELECT=$1
 	shift
-	LIMIT_SIZE=$1
-	shift
-	OPTIONS=()
+
+	local OPTIONS=()
+	local MAX_LEN=${#TOSELECT}
+
 	for OPTION in "$@"; do
 		OPTIONS+=("${OPTION}" "")
+
+		local OPTION_LEN=${#OPTION}
+
+		if [ $OPTION_LEN -gt $MAX_LEN ]; then
+			MAX_LEN=$OPTION_LEN
+		fi
 	done
 
-	if [ $LIMIT_SIZE -eq 1 ]; then
-		whiptail --title "$title" --menu "Select $TOSELECT:" 20 30 12 "${OPTIONS[@]}" 3>&1 1>&2 2>&3
-	else
-		whiptail --title "$title" --menu "Select $TOSELECT:" 0 0 10 "${OPTIONS[@]}" 3>&1 1>&2 2>&3
+	local NUM_ITEMS=$#
+
+	# Get terminal size
+	local TERM_LINES=$(tput lines)
+	local TERM_COLS=$(tput cols)
+
+	local WIDTH=$(( MAX_LEN + 15 ))
+
+	if [ $WIDTH -gt $(( TERM_COLS - 4 )) ]; then
+		WIDTH=$(( TERM_COLS - 4 ))
 	fi
+
+	local LIST_HEIGHT=$NUM_ITEMS
+	local HEIGHT=$(( LIST_HEIGHT + 8 ))
+
+	if [ $HEIGHT -gt $(( TERM_LINES - 4 )) ]; then
+		HEIGHT=$(( TERM_LINES - 4 ))
+		LIST_HEIGHT=$(( HEIGHT - 8 ))
+	fi
+
+	whiptail --title "$title" --menu "Select $TOSELECT:" $HEIGHT $WIDTH $LIST_HEIGHT "${OPTIONS[@]}" 3>&1 1>&2 2>&3
 }
 
 # Select boot partition
@@ -58,18 +109,18 @@ ROOTDEV=$(select_partition "ROOT")
 if [ $? -ne 0 ]; then exit; fi
 
 # Select region
-REGIONS=$(ls -l /usr/share/zoneinfo/ | grep '^d' | gawk -F':[0-9]* ' '/:/{print $2}')
-SELECTED_REGION=$(select_from_menu "Region" 1 $REGIONS)
+REGIONS=$(awk '/^[^#]/ { split($3, a, "/"); print a[1] }' /usr/share/zoneinfo/zone.tab | sort -u)
+SELECTED_REGION=$(select_from_menu "Region" $REGIONS)
 if [ $? -ne 0 ]; then exit; fi
 
 # Select city
-CITIES=$(ls /usr/share/zoneinfo/${SELECTED_REGION}/)
-SELECTED_CITY=$(select_from_menu "City" 1 $CITIES)
+CITIES=$(find /usr/share/zoneinfo/${SELECTED_REGION}/ -type f | sed "s|/usr/share/zoneinfo/${SELECTED_REGION}/||")
+SELECTED_CITY=$(select_from_menu "City" $CITIES)
 if [ $? -ne 0 ]; then exit; fi
 
 # Select CPU brand
 CPU_BRANDS=("Intel" "AMD" "Skip CPU microcode installation")
-CPU_BRAND=$(select_from_menu "CPU brand" 0 "${CPU_BRANDS[@]}")
+CPU_BRAND=$(select_from_menu "CPU brand" "${CPU_BRANDS[@]}")
 if [ $? -ne 0 ]; then exit; fi
 
 case $CPU_BRAND in
@@ -79,7 +130,7 @@ esac
 
 # Select GPU brand
 GPU_BRANDS=("NVIDIA" "AMD" "Intel" "Skip GPU driver installation")
-GPU_BRAND=$(select_from_menu "GPU brand" 0 "${GPU_BRANDS[@]}")
+GPU_BRAND=$(select_from_menu "GPU brand" "${GPU_BRANDS[@]}")
 if [ $? -ne 0 ]; then exit; fi
 
 case $GPU_BRAND in
@@ -93,7 +144,7 @@ if whiptail --title "$title" --yesno "Install auto-cpufreq?" 0 0; then POWER_OPT
 
 # Select Wayland compositor
 COMPOSITORS=("dwl" "Hyprland")
-SELECTED_COMPOSITOR=$(select_from_menu "Wayland compositor" 0 "${COMPOSITORS[@]}")
+SELECTED_COMPOSITOR=$(select_from_menu "Wayland compositor" "${COMPOSITORS[@]}")
 if [ $? -ne 0 ]; then exit; fi
 
 if [ "$SELECTED_COMPOSITOR" == "dwl" ]; then
@@ -130,7 +181,7 @@ fi
 
 # Select default Arabic font
 ARABIC_FONTS=("YouTube Sans Arabic" "IBM Plex Sans Arabic" "RB" "SST Arabic" "Amiri" "Noto Naskh Arabic" "SF Arabic" "18 Khebrat Musamim" "Skip Arabic font installation")
-DEFAULT_ARABIC_FONT=$(select_from_menu "default Arabic font" 0 "${ARABIC_FONTS[@]}")
+DEFAULT_ARABIC_FONT=$(select_from_menu "default Arabic font" "${ARABIC_FONTS[@]}")
 if [ $? -ne 0 ]; then exit; fi
 
 # Select Arabic fonts to install
@@ -151,29 +202,44 @@ if [ "$DEFAULT_ARABIC_FONT" != "Skip Arabic font installation" ]; then
 	printf -v JOINED_ARABIC_FONTS '%s, ' "${SELECTED_ARABIC_FONTS[@]}"
 fi
 
-msgbox "The following prompt(s) will ask you to enter Country and City. To fetch prayer times from your masjid (mawaqit.net), you can instead enter your masjid ID in prayer.sh (recommended). If neither location nor masjid ID are entered, the location will be fetched automatically based on IP."
+msgbox "The following prompts will ask you to enter location information (country and city), which is needed for location-dependent scripts (prayer.sh, weather.sh). If this information is not entered, the location will be fetched automatically based on IP every time the scripts are run.\n\nTo fetch prayer times from your masjid (mawaqit.net), you can instead enter your masjid ID in prayer.sh (recommended). If neither location nor masjid ID are entered, the location will be fetched automatically based on IP."
 
-# Enter country (REQUIRED FOR: prayer.sh)
-PRAYER_COUNTRY=$(input_box "prayer.sh: Enter Country name or ISO 3166 code (ex: Netherlands or NL):")
+# Enter country (REQUIRED FOR: prayer.sh, weather.sh)
+SCRIPT_COUNTRY=$(input_box "Enter two-letter country code (ISO 3166-1 alpha-2):")
 if [ $? -ne 0 ]; then exit; fi
 
-if [ -z "$PRAYER_COUNTRY" ]; then 
+if [ -z "$SCRIPT_COUNTRY" ]; then
 	msgbox "Location will be fetched automatically from ipinfo.io"
 fi
 
-# Enter city (REQUIRED FOR: prayer.sh)
-if [ -n "$PRAYER_COUNTRY" ]; then
-	PRAYER_CITY=$(input_box "(prayer.sh) Enter City name (ex: Makkah):")
+# Enter city (REQUIRED FOR: prayer.sh, weather.sh)
+if [ -n "$SCRIPT_COUNTRY" ]; then
+	SCRIPT_CITY=$(input_box "Enter city name (at least 1000 inhabitants, from GeoNames cities1000 DB):")
 	if [ $? -ne 0 ]; then exit; fi
 	
-	if [ -z "$PRAYER_CITY" ]; then 
+	if [ -z "$SCRIPT_CITY" ]; then
 		msgbox "Location will be fetched automatically from ipinfo.io"
 	fi
 fi
 
-PRAYER_METHODS=("3 - Muslim World League (DEFAULT)" "4 - Umm Al-Qura University, Makkah" "8 - Gulf Region" "16 - Dubai (unofficial)")
-PRAYER_METHOD=$(select_from_menu "method for calculating prayer times" 0 "${PRAYER_METHODS[@]}")
-if [ $? -ne 0 ]; then exit; fi
+# Enter method for calculating prayer times (REQUIRED FOR: prayer.sh)
+PRAYER_METHODS=(
+	"1 - Umm Al-Qura University, Makkah"
+	"2 - Muslim World League (DEFAULT)"
+	"3 - Egyptian General Authority of Survey"
+	"4 - University of Islamic Studies, Karachi"
+	"5 - Fiqh Council of North America, USA (aka Islamic Society of North America)"
+	"6 - Fiqh Council of North America, Canada"
+	"7 - Muslims of France"
+	"8 - Islamic Religious Council of Singapore"
+	"9 - Dubai (unofficial)"
+	"10 - Qatar"
+	"11 - Kuwait"
+)
+PRAYER_METHOD=$(select_from_menu "method for calculating prayer times" "${PRAYER_METHODS[@]}")
+if [ -z "$PRAYER_METHOD" ]; then
+	msgbox "Selected default method: 2 - Muslim World League"
+fi
 
 # Enter hostname
 HOSTNAME=$(input_box "Enter Hostname:")
@@ -230,9 +296,9 @@ INSTALL POWER OPTIMIZER (auto-cpufreq)?: $POWER_OPTIMIZER
 WAYLAND COMPOSITOR: $SELECTED_COMPOSITOR
 DEFAULT ARABIC FONT: $DEFAULT_ARABIC_FONT
 SELECTED ARABIC FONTS: ${JOINED_ARABIC_FONTS%, }
-COUNTRY (PRAYER): $PRAYER_COUNTRY
-CITY (PRAYER): $PRAYER_CITY
-METHOD (PRAYER): $PRAYER_METHOD
+COUNTRY: $SCRIPT_COUNTRY
+CITY: $SCRIPT_CITY
+PRAYER TIMES CALCULATION METHOD: $PRAYER_METHOD
 HOSTNAME: $HOSTNAME
 USERNAME: $USERNAME
 ROOT AND USER SAME PASSWORD?: $SAME_PASSWORD
@@ -478,9 +544,9 @@ fi
 mv $HOME/dotfiles/scripts $HOME/.config/
 for script in $HOME/.config/scripts/*.sh; do sudo chmod 777 $script; done
 
-if [ -n "__PRAYER_COUNTRY__" ] && [ -n "__PRAYER_CITY__" ]; then
-	sed -i "s/__COUNTRY__/__PRAYER_COUNTRY__/" $HOME/.config/scripts/prayer.sh
-	sed -i "s/__CITY__/__PRAYER_CITY__/" $HOME/.config/scripts/prayer.sh
+if [ -n "__SCRIPT_COUNTRY__" ] && [ -n "__SCRIPT_CITY__" ]; then
+	sed -i "s/__COUNTRY__/__SCRIPT_COUNTRY__/" $HOME/.config/scripts/prayer.sh $HOME/.config/scripts/weather.sh
+	sed -i "s/__CITY__/__SCRIPT_CITY__/" $HOME/.config/scripts/prayer.sh $HOME/.config/scripts/weather.sh
 	sed -i "s/__METHOD__/__PRAYER_METHOD__/" $HOME/.config/scripts/prayer.sh
 fi
 
@@ -593,7 +659,7 @@ rm -rf $HOME/dotfiles $HOME/wallpapers $0
 exit
 EOF
 
-sed -i "s|__GPU_BRAND__|$GPU_BRAND|g; s|__POWER_OPTIMIZER__|$POWER_OPTIMIZER|g; s|__SELECTED_COMPOSITOR__|$SELECTED_COMPOSITOR|g; s|__PRAYER_COUNTRY__|$PRAYER_COUNTRY|g; s|__PRAYER_CITY__|$PRAYER_CITY|g; s|__PRAYER_METHOD__|${PRAYER_METHOD%% *}|g; s|__SELECTED_ARABIC_FONTS__|$(printf '"%s" ' "${SELECTED_ARABIC_FONTS[@]}")|g; s|__DEFAULT_ARABIC_FONT__|$DEFAULT_ARABIC_FONT|g;" /mnt/home/$USERNAME/customization.sh
+sed -i "s|__GPU_BRAND__|$GPU_BRAND|g; s|__POWER_OPTIMIZER__|$POWER_OPTIMIZER|g; s|__SELECTED_COMPOSITOR__|$SELECTED_COMPOSITOR|g; s|__SCRIPT_COUNTRY__|$SCRIPT_COUNTRY|g; s|__SCRIPT_CITY__|$SCRIPT_CITY|g; s|__PRAYER_METHOD__|${PRAYER_METHOD%% *}|g; s|__SELECTED_ARABIC_FONTS__|$(printf '"%s" ' "${SELECTED_ARABIC_FONTS[@]}")|g; s|__DEFAULT_ARABIC_FONT__|$DEFAULT_ARABIC_FONT|g;" /mnt/home/$USERNAME/customization.sh
 
 arch-chroot /mnt /bin/su -c "cd; bash customization.sh" $USERNAME -
 
