@@ -545,9 +545,9 @@ mv $HOME/dotfiles/scripts $HOME/.config/
 for script in $HOME/.config/scripts/*.sh; do sudo chmod 777 $script; done
 
 if [ -n "__SCRIPT_COUNTRY__" ] && [ -n "__SCRIPT_CITY__" ]; then
-	sed -i "s/__COUNTRY__/__SCRIPT_COUNTRY__/" $HOME/.config/scripts/prayer.sh $HOME/.config/scripts/weather.sh
-	sed -i "s/__CITY__/__SCRIPT_CITY__/" $HOME/.config/scripts/prayer.sh $HOME/.config/scripts/weather.sh
-	sed -i "s/__METHOD__/__PRAYER_METHOD__/" $HOME/.config/scripts/prayer.sh
+	sed -i "0,/__COUNTRY__/{s/__COUNTRY__/__SCRIPT_COUNTRY__/}" $HOME/.config/scripts/prayer.sh $HOME/.config/scripts/weather.sh
+	sed -i "0,/__CITY__/{s/__CITY__/__SCRIPT_CITY__/}" $HOME/.config/scripts/prayer.sh $HOME/.config/scripts/weather.sh
+	sed -i "0,/__METHOD__/{s/__METHOD__/__PRAYER_METHOD__/}" $HOME/.config/scripts/prayer.sh
 fi
 
 # Configure Waybar
