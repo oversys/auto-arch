@@ -100,6 +100,53 @@ select_from_menu() {
 	whiptail --title "$title" --menu "Select $TOSELECT:" $HEIGHT $WIDTH $LIST_HEIGHT "${OPTIONS[@]}" 3>&1 1>&2 2>&3
 }
 
+select_from_checklist() {
+	local TOSELECT=$1
+	shift
+
+	local ITEMS=()
+	local MAX_LEN=0
+
+	for ITEM in "$@"; do
+		ITEMS+=("${ITEM}" "OFF")
+
+		local ITEM_LEN=${#ITEM}
+
+		if [ $ITEM_LEN -gt $MAX_LEN ]; then
+			MAX_LEN=$ITEM_LEN
+		fi
+	done
+
+	local NUM_ITEMS=$#
+
+	# Get terminal size
+	local TERM_LINES=$(tput lines)
+	local TERM_COLS=$(tput cols)
+
+	local WIDTH=$(( MAX_LEN + 15 ))
+
+	local MIN_WIDTH=35
+
+	if [ $WIDTH -lt $MIN_WIDTH ]; then
+		WIDTH=$MIN_WIDTH
+	fi
+
+	if [ $WIDTH -gt $(( TERM_COLS - 4 )) ]; then
+		WIDTH=$(( TERM_COLS - 4 ))
+	fi
+
+	local LIST_HEIGHT=$NUM_ITEMS
+	local HEIGHT=$(( LIST_HEIGHT + 8 ))
+
+	if [ $HEIGHT -gt $(( TERM_LINES - 4 )) ]; then
+		HEIGHT=$(( TERM_LINES - 4 ))
+		LIST_HEIGHT=$(( HEIGHT - 8 ))
+	fi
+
+	# whiptail --title "$title" --noitem --checklist "Select $TOSELECT" $HEIGHT $WIDTH $LIST_HEIGHT "${ITEMS[@]}" 3>&1 1>&2 2>&3
+	whiptail --title "$title" --noitem --checklist "Select $TOSELECT" 0 0 0 "${ITEMS[@]}" 3>&1 1>&2 2>&3
+}
+
 # Select boot partition
 BOOTDEV=$(select_partition "BOOT")
 if [ $? -ne 0 ]; then exit; fi
@@ -117,6 +164,14 @@ if [ $? -ne 0 ]; then exit; fi
 CITIES=$(find /usr/share/zoneinfo/${SELECTED_REGION}/ -type f | sed "s|/usr/share/zoneinfo/${SELECTED_REGION}/||")
 SELECTED_CITY=$(select_from_menu "City" $CITIES)
 if [ $? -ne 0 ]; then exit; fi
+
+# Select locales
+LOCALES=($(sed -nE '/^#en_US\.UTF-8 /d; s/^#([a-zA-Z_]+\.UTF-8).*/\1/p' /etc/locale.gen))
+SELECTED_LOCALES=$(select_from_checklist "additional locales\n(en_US.UTF-8 is always enabled)" "${LOCALES[@]}")
+if [ $? -ne 0 ]; then exit; fi
+
+readarray -t SELECTED_LOCALES < <(xargs -n1 <<< "$SELECTED_LOCALES")
+printf -v JOINED_LOCALES '%s, ' "${SELECTED_LOCALES[@]}"
 
 # Select CPU brand
 CPU_BRANDS=("Intel" "AMD" "Skip CPU microcode installation")
@@ -186,17 +241,12 @@ if [ $? -ne 0 ]; then exit; fi
 
 # Select Arabic fonts to install
 if [ "$DEFAULT_ARABIC_FONT" != "Skip Arabic font installation" ]; then
-	CHECKLIST_ITEMS=()
-	for font in "${ARABIC_FONTS[@]}"; do
-		if [ "$font" != "$DEFAULT_ARABIC_FONT" ] && [ "$font" != "Skip Arabic font installation" ]; then
-			CHECKLIST_ITEMS+=("$font" "OFF")
-		fi
-	done
-	
-	SELECTED_ARABIC_FONTS=$(whiptail --title "$title" --noitem --checklist "Select Arabic fonts" 0 0 0 "${CHECKLIST_ITEMS[@]}" 3>&1 1>&2 2>&3)
+	readarray -t CHECKLIST_FONTS < <(printf '%s\n' "${ARABIC_FONTS[@]}" | grep -vF -e "$DEFAULT_ARABIC_FONT" -e "Skip Arabic font installation")
+
+	SELECTED_ARABIC_FONTS=$(select_from_checklist "Arabic fonts" "${CHECKLIST_FONTS[@]}")
 	if [ $? -ne 0 ]; then exit; fi
 	
-	eval "SELECTED_ARABIC_FONTS=($SELECTED_ARABIC_FONTS)"
+	readarray -t SELECTED_ARABIC_FONTS < <(xargs -n1 <<< "$SELECTED_ARABIC_FONTS")
 	SELECTED_ARABIC_FONTS+=("$DEFAULT_ARABIC_FONT")
 
 	printf -v JOINED_ARABIC_FONTS '%s, ' "${SELECTED_ARABIC_FONTS[@]}"
@@ -290,6 +340,7 @@ whiptail --title "$title" --yesno "BOOT PARTITION: $BOOTDEV
 ROOT PARTITION: $ROOTDEV
 REGION (TIMEZONE): $SELECTED_REGION
 CITY (TIMEZONE): $SELECTED_CITY
+SELECTED ADDITIONAL LOCALES: ${JOINED_LOCALES%, }
 CPU BRAND: $CPU_BRAND
 GPU BRAND: $GPU_BRAND
 INSTALL POWER OPTIMIZER (auto-cpufreq)?: $POWER_OPTIMIZER
@@ -444,6 +495,11 @@ hwclock --systohc
 
 # Localization
 sed -i "s/#en_US.UTF-8/en_US.UTF-8/g" /etc/locale.gen
+
+for locale in ${SELECTED_LOCALES[@]}; do
+	sed -i "/^#\${locale//./\\.} /s/^#//" /etc/locale.gen
+done
+
 locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
